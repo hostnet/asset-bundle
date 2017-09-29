@@ -1,0 +1,61 @@
+{
+    "name":        "hostnet/asset-bundle",
+    "type":        "symfony-bundle",
+    "description": "Bundle to glue Assets",
+    "license":     "MIT",
+    "require": {
+        "php":               ">=7.0",
+        "hostnet/asset-lib": "dev-master",
+        "symfony/symfony":   "^3.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hostnet\\Bundle\\AssetBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Hostnet\\Bundle\\AssetBundle\\": "test/"
+        }
+    },
+    "repositories": {
+        "hostnet": {
+            "type": "composer",
+            "url":  "https://packagist.hostnetbv.nl"
+        },
+        "resolver": {
+            "type": "package",
+            "package": {
+                "name":    "hostnet/asset-lib",
+                "version": "dev-master",
+                "source": {
+                    "type":      "git",
+                    "url":       "https://github.com/hostnet/asset-lib.git",
+                    "reference": "818991201cafc266f0759e27bf149a67d460dc38"
+                },
+                "require": {
+                    "php":              ">=7.0",
+                    "psr/simple-cache": "^1.0",
+                    "symfony/console":  "^3.3"
+                },
+                "require-dev": {
+                    "phpunit/phpunit": "^6.2",
+                    "symfony/process": "^3.3"
+                },
+                "autoload": {
+                    "psr-4": {
+                        "Hostnet\\Component\\Resolver\\": "src/"
+                    }
+                }
+            }
+        }
+    },
+    "archive": {
+        "exclude": [
+            "/test"
+        ]
+    }
+}
