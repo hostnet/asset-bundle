@@ -4,7 +4,7 @@
     "description": "Bundle to glue Assets",
     "license":     "MIT",
     "require": {
-        "php":               ">=7.0",
+        "php":               ">=7.1",
         "hostnet/asset-lib": "dev-master",
         "symfony/symfony":   "^3.3"
     },
