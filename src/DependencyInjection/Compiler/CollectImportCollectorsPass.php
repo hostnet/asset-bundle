@@ -1,4 +1,8 @@
 <?php
+declare(strict_types=1);
+/**
+ * @copyright 2017 Hostnet B.V.
+ */
 
 namespace Hostnet\Bundle\AssetBundle\DependencyInjection\Compiler;
 

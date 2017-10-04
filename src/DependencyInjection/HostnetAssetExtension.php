@@ -70,7 +70,7 @@ class HostnetAssetExtension extends Extension
         // Register the main services.
         $import_collector = (new Definition(ImportFinder::class, [$container->getParameter('kernel.project_dir')]))
             ->setPublic(false);
-        $pipeline = (new Definition(ContentPipeline::class, [
+        $pipeline         = (new Definition(ContentPipeline::class, [
             new Reference('event_dispatcher'),
             new Reference('logger'),
             new Reference('hostnet_asset.config'),
@@ -130,19 +130,19 @@ class HostnetAssetExtension extends Extension
             ->setPublic(false)
             ->addTag('asset.import_collector');
 
-        $js_processor = (new Definition(IdentityProcessor::class, ['js', ContentState::PROCESSED]))
+        $js_processor     = (new Definition(IdentityProcessor::class, ['js', ContentState::PROCESSED]))
             ->setPublic(false)
             ->addTag('asset.processor');
-        $css_processor = (new Definition(IdentityProcessor::class, ['css']))
+        $css_processor    = (new Definition(IdentityProcessor::class, ['css']))
             ->setPublic(false)
             ->addTag('asset.processor');
-        $html_processor = (new Definition(IdentityProcessor::class, ['html']))
+        $html_processor   = (new Definition(IdentityProcessor::class, ['html']))
             ->setPublic(false)
             ->addTag('asset.processor');
         $module_processor = (new Definition(ModuleProcessor::class))
             ->setPublic(false)
             ->addTag('asset.processor');
-        $json_processor = (new Definition(JsonProcessor::class))
+        $json_processor   = (new Definition(JsonProcessor::class))
             ->setPublic(false)
             ->addTag('asset.processor');
 
@@ -189,7 +189,7 @@ class HostnetAssetExtension extends Extension
         ]))
             ->setPublic(false);
 
-        $collector = (new Definition(TsImportCollector::class, [
+        $collector  = (new Definition(TsImportCollector::class, [
             new Reference('hostnet_asset.import_collector.ts.js_fallback_collector'),
             new Reference('hostnet_asset.import_collector.ts.file_resolver')
         ]))
@@ -207,7 +207,7 @@ class HostnetAssetExtension extends Extension
 
     private function configureLessLoader(ContainerBuilder $container)
     {
-        $collector = (new Definition(LessImportCollector::class))
+        $collector  = (new Definition(LessImportCollector::class))
             ->setPublic(false)
             ->addTag('asset.import_collector');
         $transpiler = (new Definition(LessContentProcessor::class, [new Reference('hostnet_asset.node.executable')]))
@@ -220,7 +220,7 @@ class HostnetAssetExtension extends Extension
 
     private function configureAngularLoader(ContainerBuilder $container)
     {
-        $collector = (new Definition(AngularImportCollector::class))
+        $collector   = (new Definition(AngularImportCollector::class))
             ->setPublic(false)
             ->addTag('asset.import_collector');
         $transformer = (new Definition(AngularHtmlListener::class, [
