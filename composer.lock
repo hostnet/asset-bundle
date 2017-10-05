@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ee2b5a73b03df7b24b72b3bb2f43b24",
+    "content-hash": "818cceef7a72864e12a48175c0ee4800",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -469,24 +469,37 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hostnet/asset-lib.git",
-                "reference": "818991201cafc266f0759e27bf149a67d460dc38"
+                "reference": "b5047374cd7567c56d6115c979e19becbe456985"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hostnet/asset-lib/zipball/b5047374cd7567c56d6115c979e19becbe456985",
+                "reference": "b5047374cd7567c56d6115c979e19becbe456985",
+                "shasum": ""
             },
             "require": {
-                "php": ">=7.0",
+                "php": ">=7.1",
                 "psr/simple-cache": "^1.0",
-                "symfony/console": "^3.3"
+                "symfony/console": "^3.3",
+                "symfony/event-dispatcher": "^3.3"
             },
             "require-dev": {
+                "hostnet/phpcs-tool": "^5.2",
                 "phpunit/phpunit": "^6.2",
                 "symfony/process": "^3.3"
             },
-            "type": "library",
+            "type": "hostnet-lib",
             "autoload": {
                 "psr-4": {
                     "Hostnet\\Component\\Resolver\\": "src/"
                 }
             },
-            "time": "2017-09-29T07:01:05+00:00"
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Tool for finding all dependencies given a set of input files.",
+            "time": "2017-10-04T09:18:38+00:00"
         },
         {
             "name": "paragonie/random_compat",

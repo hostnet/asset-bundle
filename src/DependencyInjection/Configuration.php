@@ -9,7 +9,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Process\ExecutableFinder;
 
-class Configuration implements ConfigurationInterface
+final class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
@@ -47,14 +47,12 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('node')
-                            ->isRequired()
                             ->info('Path to the NodeJS binary.')
                             ->defaultValue(function () use ($finder) {
                                 return $finder->find('node', '/usr/bin/node');
                             })
                             ->end()
                         ->scalarNode('node_modules')
-                            ->isRequired()
                             ->info('Path to the application\'s node_modules.')
                             ->defaultValue('%kernel.root_dir%/../node_modules')
                             ->end()

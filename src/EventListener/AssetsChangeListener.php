@@ -7,19 +7,28 @@ declare(strict_types=1);
 namespace Hostnet\Bundle\AssetBundle\EventListener;
 
 use Hostnet\Component\Resolver\Bundler\PipelineBundler;
+use Hostnet\Component\Resolver\ConfigInterface;
+use Hostnet\Component\Resolver\FileSystem\FileReader;
+use Hostnet\Component\Resolver\FileSystem\FileWriter;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-class AssetsChangeListener
+final class AssetsChangeListener
 {
     /**
      * @var PipelineBundler
      */
     private $bundler;
 
-    public function __construct(PipelineBundler $bundler)
+    /**
+     * @var ConfigInterface
+     */
+    private $config;
+
+    public function __construct(PipelineBundler $bundler, ConfigInterface $config)
     {
         $this->bundler = $bundler;
+        $this->config = $config;
     }
 
     public function onKernelResponse(FilterResponseEvent $e)
@@ -29,6 +38,9 @@ class AssetsChangeListener
             return;
         }
 
-        $this->bundler->execute();
+        $reader = new FileReader($this->config->cwd());
+        $writer = new FileWriter($this->config->cwd());
+
+        $this->bundler->execute($reader, $writer);
     }
 }

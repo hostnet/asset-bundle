@@ -7,7 +7,7 @@ namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 
 use Hostnet\Component\Resolver\ConfigInterface;
 
-class ArrayConfig implements ConfigInterface
+final class ArrayConfig implements ConfigInterface
 {
     private $is_dev;
     private $cwd;

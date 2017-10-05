@@ -6,13 +6,15 @@ declare(strict_types=1);
 
 namespace Hostnet\Bundle\AssetBundle\Twig;
 
-class AssetExtension extends \Twig_Extension
-{
-    private $is_dev;
+use Hostnet\Component\Resolver\ConfigInterface;
 
-    public function __construct(bool $is_dev)
+final class AssetExtension extends \Twig_Extension
+{
+    private $config;
+
+    public function __construct(ConfigInterface $config)
     {
-        $this->is_dev = $is_dev;
+        $this->config = $config;
     }
 
     public function getFunctions()
@@ -24,6 +26,6 @@ class AssetExtension extends \Twig_Extension
 
     public function assetUrl(string $name): string
     {
-        return ($this->is_dev ? '/dev/' : '/dist/' ) . $name;
+        return sprintf('/%s/%s', $this->config->getOutputFolder(), $name);
     }
 }

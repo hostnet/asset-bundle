@@ -10,7 +10,7 @@ use Hostnet\Bundle\AssetBundle\DependencyInjection\Compiler\CollectorAssetProces
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class HostnetAssetBundle extends Bundle
+final class HostnetAssetBundle extends Bundle
 {
     /**
      * {@inheritdoc}

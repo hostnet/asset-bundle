@@ -34,7 +34,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class HostnetAssetExtension extends Extension
+final class HostnetAssetExtension extends Extension
 {
     /**
      * {@inheritdoc}
@@ -236,7 +236,10 @@ class HostnetAssetExtension extends Extension
 
     private function configureCommands(ContainerBuilder $container)
     {
-        $compile = (new Definition(CompileCommand::class, [new Reference('hostnet_asset.bundler')]))
+        $compile = (new Definition(CompileCommand::class, [
+            new Reference('hostnet_asset.bundler'),
+            new Reference('hostnet_asset.config'),
+        ]))
             ->addTag('console.command')
             ->setPublic(false);
 
@@ -245,7 +248,10 @@ class HostnetAssetExtension extends Extension
 
     private function configureEventListeners(ContainerBuilder $container)
     {
-        $change_listener = (new Definition(AssetsChangeListener::class, [new Reference('hostnet_asset.bundler')]))
+        $change_listener = (new Definition(AssetsChangeListener::class, [
+            new Reference('hostnet_asset.bundler'),
+            new Reference('hostnet_asset.config'),
+        ]))
             ->addTag('kernel.event_listener', ['event' => KernelEvents::RESPONSE, 'method' => 'onKernelResponse'])
             ->setPublic(false);
 
@@ -254,7 +260,9 @@ class HostnetAssetExtension extends Extension
 
     private function configureTwig(ContainerBuilder $container)
     {
-        $ext = (new Definition(AssetExtension::class, [$container->getParameter('kernel.debug')]))
+        $ext = (new Definition(AssetExtension::class, [
+            new Reference('hostnet_asset.config'),
+        ]))
             ->addTag('twig.extension')
             ->setPublic(false);
 
