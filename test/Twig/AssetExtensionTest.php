@@ -30,7 +30,7 @@ class AssetExtensionTest extends TestCase
     public function testGetFunctions()
     {
         self::assertEquals([
-            new \Twig_Function('asset_url', [$this->asset_extension, 'assetUrl'])
+            new \Twig_SimpleFunction('asset_url', [$this->asset_extension, 'assetUrl'])
         ], $this->asset_extension->getFunctions());
     }
 

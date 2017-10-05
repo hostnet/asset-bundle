@@ -20,7 +20,7 @@ final class AssetExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_Function('asset_url', [$this, 'assetUrl'])
+            new \Twig_SimpleFunction('asset_url', [$this, 'assetUrl'])
         ];
     }
 
