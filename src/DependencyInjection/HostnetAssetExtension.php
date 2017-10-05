@@ -228,7 +228,7 @@ final class HostnetAssetExtension extends Extension
             new Reference('hostnet_asset.pipline')
         ]))
             ->setPublic(false)
-            ->addTag('kernel.event_listener', ['event' => AssetEvents::READY, 'method' => 'onPreWrite']);
+            ->addTag('kernel.event_listener', ['event' => AssetEvents::POST_PROCESS, 'method' => 'onPostTranspile']);
 
         $container->setDefinition('hostnet_asset.import_collector.angular', $collector);
         $container->setDefinition('hostnet_asset.event_listener.angular', $transformer);

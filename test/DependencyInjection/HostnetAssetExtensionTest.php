@@ -373,7 +373,10 @@ class HostnetAssetExtensionTest extends TestCase
                 new Reference('hostnet_asset.pipline'),
             ]))
                 ->setPublic(false)
-                ->addTag('kernel.event_listener', ['event' => AssetEvents::READY, 'method' => 'onPreWrite']),
+                ->addTag('kernel.event_listener', [
+                    'event' => AssetEvents::POST_PROCESS,
+                    'method' => 'onPostTranspile'
+                ]),
             $container->getDefinition('hostnet_asset.event_listener.angular')
         );
     }
