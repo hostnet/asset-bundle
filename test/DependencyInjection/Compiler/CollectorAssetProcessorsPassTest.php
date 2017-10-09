@@ -28,7 +28,7 @@ class CollectorAssetProcessorsPassTest extends TestCase
     public function testProcess()
     {
         $container = new ContainerBuilder();
-        $pipline = new Definition();
+        $pipline   = new Definition();
 
         $container->setDefinition('hostnet_asset.pipline', $pipline);
         $container->setDefinition('processor1', (new Definition())->addTag('asset.processor'));

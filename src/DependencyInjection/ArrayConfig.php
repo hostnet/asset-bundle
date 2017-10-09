@@ -11,6 +11,7 @@ final class ArrayConfig implements ConfigInterface
 {
     private $is_dev;
     private $cwd;
+    private $include_paths;
     private $entry_points;
     private $asset_files;
     private $output_folder;
@@ -21,6 +22,7 @@ final class ArrayConfig implements ConfigInterface
     public function __construct(
         bool $is_dev,
         string $cwd,
+        array $include_paths,
         array $entry_points,
         array $asset_files,
         string $output_folder,
@@ -30,6 +32,7 @@ final class ArrayConfig implements ConfigInterface
     ) {
         $this->is_dev        = $is_dev;
         $this->cwd           = $cwd;
+        $this->include_paths = $include_paths;
         $this->entry_points  = $entry_points;
         $this->asset_files   = $asset_files;
         $this->output_folder = $output_folder;
@@ -44,6 +47,14 @@ final class ArrayConfig implements ConfigInterface
     public function isDev(): bool
     {
         return $this->is_dev;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIncludePaths(): array
+    {
+        return $this->include_paths;
     }
 
     /**
