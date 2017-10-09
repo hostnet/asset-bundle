@@ -28,7 +28,7 @@ final class AssetsChangeListener
     public function __construct(PipelineBundler $bundler, ConfigInterface $config)
     {
         $this->bundler = $bundler;
-        $this->config = $config;
+        $this->config  = $config;
     }
 
     public function onKernelResponse(FilterResponseEvent $e)

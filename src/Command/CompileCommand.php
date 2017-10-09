@@ -30,7 +30,7 @@ final class CompileCommand extends Command
         parent::__construct('assets:compile');
 
         $this->bundler = $bundler;
-        $this->config = $config;
+        $this->config  = $config;
     }
 
     /**

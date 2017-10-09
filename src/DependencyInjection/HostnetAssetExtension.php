@@ -47,6 +47,7 @@ final class HostnetAssetExtension extends Extension
         $bundler_config = (new Definition(ArrayConfig::class, [
             $container->getParameter('kernel.debug'),
             $container->getParameter('kernel.project_dir'),
+            $config['include_paths'],
             $config['files'],
             $config['assets'],
             $container->getParameter('kernel.debug') ? $config['output_folder_dev'] : $config['output_folder'],
@@ -119,7 +120,7 @@ final class HostnetAssetExtension extends Extension
     private function configureDefaultLoaders(ContainerBuilder $container)
     {
         $js_file_resolver = (new Definition(FileResolver::class, [
-            $container->getParameter('kernel.project_dir'),
+            new Reference('hostnet_asset.config'),
             ['.js', '.json', '.node']
         ]))
             ->setPublic(false);
@@ -179,7 +180,7 @@ final class HostnetAssetExtension extends Extension
     private function configureTsLoader(ContainerBuilder $container)
     {
         $file_resolver = (new Definition(FileResolver::class, [
-            $container->getParameter('kernel.project_dir'),
+            new Reference('hostnet_asset.config'),
             ['.ts', '.js', '.json', '.node']
         ]))
             ->setPublic(false);

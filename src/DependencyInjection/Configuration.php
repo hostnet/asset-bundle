@@ -27,6 +27,13 @@ final class Configuration implements ConfigurationInterface
                     ->info('List of assets which need to be transpiled individually.')
                     ->prototype('scalar')->end()
                     ->end()
+                ->arrayNode('include_paths')
+                    ->info(
+                        'List of additional folders from which modules can be loaded. '.
+                        'Relative paths are from the project root dir.'
+                    )
+                    ->prototype('scalar')->end()
+                    ->end()
                 ->scalarNode('source_root')
                     ->info('Location of the sources directory.')
                     ->defaultValue('app/Resources/assets')

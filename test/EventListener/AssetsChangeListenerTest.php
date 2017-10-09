@@ -48,7 +48,7 @@ class AssetsChangeListenerTest extends TestCase
             ->execute(Argument::type(ReaderInterface::class), Argument::type(WriterInterface::class))
             ->shouldBeCalled();
 
-        $kernel = $this->prophesize(HttpKernelInterface::class);
+        $kernel  = $this->prophesize(HttpKernelInterface::class);
         $request = new Request();
 
         $e = new FilterResponseEvent($kernel->reveal(), $request, HttpKernelInterface::MASTER_REQUEST, new Response());
@@ -64,7 +64,7 @@ class AssetsChangeListenerTest extends TestCase
             ->execute()
             ->shouldNotBeCalled();
 
-        $kernel = $this->prophesize(HttpKernelInterface::class);
+        $kernel  = $this->prophesize(HttpKernelInterface::class);
         $request = new Request();
 
         $e = new FilterResponseEvent($kernel->reveal(), $request, HttpKernelInterface::SUB_REQUEST, new Response());

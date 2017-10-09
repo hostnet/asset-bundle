@@ -27,7 +27,7 @@ class CollectImportCollectorsPassTest extends TestCase
 
     public function testProcess()
     {
-        $container = new ContainerBuilder();
+        $container        = new ContainerBuilder();
         $import_collector = new Definition();
 
         $container->setDefinition('hostnet_asset.import_collector', $import_collector);

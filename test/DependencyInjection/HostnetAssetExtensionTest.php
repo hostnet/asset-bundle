@@ -115,6 +115,7 @@ class HostnetAssetExtensionTest extends TestCase
             __DIR__,
             [],
             [],
+            [],
             'dev',
             'web',
             'app/Resources/assets',
@@ -160,6 +161,7 @@ class HostnetAssetExtensionTest extends TestCase
         self::assertEquals((new Definition(ArrayConfig::class, [
             false,
             __DIR__,
+            [],
             [],
             [],
             'dist',
@@ -212,6 +214,7 @@ class HostnetAssetExtensionTest extends TestCase
             __DIR__,
             [],
             [],
+            [],
             'dev',
             'web',
             'app/Resources/assets',
@@ -225,7 +228,7 @@ class HostnetAssetExtensionTest extends TestCase
         ]))->setPublic(false), $container->getDefinition('hostnet_asset.import_collector.ts.js_fallback_collector'));
 
         self::assertEquals((new Definition(FileResolver::class, [
-            __DIR__,
+            new Reference('hostnet_asset.config'),
             ['.ts', '.js', '.json', '.node']
         ]))->setPublic(false), $container->getDefinition('hostnet_asset.import_collector.ts.file_resolver'));
 
@@ -286,6 +289,7 @@ class HostnetAssetExtensionTest extends TestCase
         self::assertEquals((new Definition(ArrayConfig::class, [
             true,
             __DIR__,
+            [],
             [],
             [],
             'dev',
@@ -350,6 +354,7 @@ class HostnetAssetExtensionTest extends TestCase
         self::assertEquals((new Definition(ArrayConfig::class, [
             true,
             __DIR__,
+            [],
             [],
             [],
             'dev',
@@ -439,7 +444,7 @@ class HostnetAssetExtensionTest extends TestCase
         );
 
         self::assertEquals((new Definition(FileResolver::class, [
-            __DIR__,
+            new Reference('hostnet_asset.config'),
             ['.js', '.json', '.node']
         ]))->setPublic(false), $container->getDefinition('hostnet_asset.import_collector.js.file_resolver'));
 

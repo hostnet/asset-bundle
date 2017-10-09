@@ -17,6 +17,7 @@ class ArrayConfigTest extends TestCase
         $config = new ArrayConfig(
             true,
             __DIR__,
+            ['phpunit'],
             ['foo'],
             ['bar'],
             'phpunit',
@@ -27,6 +28,7 @@ class ArrayConfigTest extends TestCase
 
         self::assertEquals(true, $config->isDev());
         self::assertEquals(__DIR__, $config->cwd());
+        self::assertEquals(['phpunit'], $config->getIncludePaths());
         self::assertEquals(['foo'], $config->getEntryPoints());
         self::assertEquals(['bar'], $config->getAssetFiles());
         self::assertEquals('phpunit', $config->getOutputFolder());
