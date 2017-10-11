@@ -376,6 +376,7 @@ class HostnetAssetExtensionTest extends TestCase
             (new Definition(AngularHtmlListener::class, [
                 new Reference('hostnet_asset.config'),
                 new Reference('hostnet_asset.pipline'),
+                new Reference(ImportFinder::class)
             ]))
                 ->setPublic(false)
                 ->addTag('kernel.event_listener', [
