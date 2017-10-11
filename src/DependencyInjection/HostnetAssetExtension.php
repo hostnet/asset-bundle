@@ -226,7 +226,8 @@ final class HostnetAssetExtension extends Extension
             ->addTag('asset.import_collector');
         $transformer = (new Definition(AngularHtmlListener::class, [
             new Reference('hostnet_asset.config'),
-            new Reference('hostnet_asset.pipline')
+            new Reference('hostnet_asset.pipline'),
+            new Reference(ImportFinder::class)
         ]))
             ->setPublic(false)
             ->addTag('kernel.event_listener', ['event' => AssetEvents::POST_PROCESS, 'method' => 'onPostTranspile']);
