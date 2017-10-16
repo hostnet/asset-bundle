@@ -63,6 +63,7 @@ class HostnetAssetExtensionTest extends TestCase
             'service_container',
             'hostnet_asset.config',
             'hostnet_asset.node.executable',
+            'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_collector',
             'hostnet_asset.pipline',
             'hostnet_asset.bundler',
@@ -95,6 +96,7 @@ class HostnetAssetExtensionTest extends TestCase
             'service_container',
             'hostnet_asset.config',
             'hostnet_asset.node.executable',
+            'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_collector',
             'hostnet_asset.pipline',
             'hostnet_asset.bundler',
@@ -141,12 +143,14 @@ class HostnetAssetExtensionTest extends TestCase
             'service_container',
             'hostnet_asset.config',
             'hostnet_asset.node.executable',
+            'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_collector',
             'hostnet_asset.pipline',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
             'hostnet_asset.twig.extension',
+            'hostnet_asset.runner.clean_css',
             'hostnet_asset.event_listener.uglify',
             'hostnet_asset.event_listener.clean_css',
             'hostnet_asset.import_collector.js.file_resolver',
@@ -190,6 +194,7 @@ class HostnetAssetExtensionTest extends TestCase
             'service_container',
             'hostnet_asset.config',
             'hostnet_asset.node.executable',
+            'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_collector',
             'hostnet_asset.pipline',
             'hostnet_asset.bundler',
@@ -206,6 +211,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.import_collector.ts.js_fallback_collector',
             'hostnet_asset.import_collector.ts.file_resolver',
             'hostnet_asset.import_collector.ts',
+            'hostnet_asset.runner.ts',
             'hostnet_asset.processor.ts',
         ], array_keys($container->getDefinitions()));
 
@@ -244,7 +250,7 @@ class HostnetAssetExtensionTest extends TestCase
 
         self::assertEquals(
             (new Definition(TsContentProcessor::class, [
-                new Reference('hostnet_asset.node.executable'),
+                new Reference('hostnet_asset.runner.ts'),
             ]))
                 ->setPublic(false)
                 ->addTag('asset.processor'),
@@ -269,6 +275,7 @@ class HostnetAssetExtensionTest extends TestCase
             'service_container',
             'hostnet_asset.config',
             'hostnet_asset.node.executable',
+            'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_collector',
             'hostnet_asset.pipline',
             'hostnet_asset.bundler',
@@ -283,6 +290,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.processor.css',
             'hostnet_asset.processor.html',
             'hostnet_asset.import_collector.less',
+            'hostnet_asset.runner.less',
             'hostnet_asset.processor.less',
         ], array_keys($container->getDefinitions()));
 
@@ -309,7 +317,7 @@ class HostnetAssetExtensionTest extends TestCase
 
         self::assertEquals(
             (new Definition(LessContentProcessor::class, [
-                new Reference('hostnet_asset.node.executable'),
+                new Reference('hostnet_asset.runner.less'),
             ]))
                 ->setPublic(false)
                 ->addTag('asset.processor'),
@@ -334,6 +342,7 @@ class HostnetAssetExtensionTest extends TestCase
             'service_container',
             'hostnet_asset.config',
             'hostnet_asset.node.executable',
+            'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_collector',
             'hostnet_asset.pipline',
             'hostnet_asset.bundler',
@@ -410,6 +419,7 @@ class HostnetAssetExtensionTest extends TestCase
             new Reference('hostnet_asset.pipline'),
             new Reference('logger'),
             new Reference('hostnet_asset.config'),
+            new Reference('hostnet_asset.runner.uglify_js'),
         ]))->setPublic(true), $container->getDefinition('hostnet_asset.bundler'));
 
         self::assertEquals(

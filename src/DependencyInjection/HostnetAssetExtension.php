@@ -16,6 +16,10 @@ use Hostnet\Component\Resolver\Bundler\Processor\JsonProcessor;
 use Hostnet\Component\Resolver\Bundler\Processor\LessContentProcessor;
 use Hostnet\Component\Resolver\Bundler\Processor\ModuleProcessor;
 use Hostnet\Component\Resolver\Bundler\Processor\TsContentProcessor;
+use Hostnet\Component\Resolver\Bundler\Runner\CleanCssRunner;
+use Hostnet\Component\Resolver\Bundler\Runner\LessRunner;
+use Hostnet\Component\Resolver\Bundler\Runner\TsRunner;
+use Hostnet\Component\Resolver\Bundler\Runner\UglifyJsRunner;
 use Hostnet\Component\Resolver\Event\AssetEvents;
 use Hostnet\Component\Resolver\EventListener\AngularHtmlListener;
 use Hostnet\Component\Resolver\EventListener\CleanCssListener;
@@ -68,6 +72,10 @@ final class HostnetAssetExtension extends Extension
 
         $container->setDefinition('hostnet_asset.node.executable', $node_executable);
 
+        $uglify = new Definition(UglifyJsRunner::class, [new Reference('hostnet_asset.node.executable')]);
+        $uglify->setPublic(false);
+        $container->setDefinition('hostnet_asset.runner.uglify_js', $uglify);
+
         // Register the main services.
         $import_collector = (new Definition(ImportFinder::class, [$container->getParameter('kernel.project_dir')]))
             ->setPublic(false);
@@ -83,6 +91,7 @@ final class HostnetAssetExtension extends Extension
             new Reference('hostnet_asset.pipline'),
             new Reference('logger'),
             new Reference('hostnet_asset.config'),
+            new Reference('hostnet_asset.runner.uglify_js'),
         ]))
             ->setPublic(true);
 
@@ -147,23 +156,26 @@ final class HostnetAssetExtension extends Extension
             ->setPublic(false)
             ->addTag('asset.processor');
 
-
         // Only enable the UglifyJs Transformer in non-dev
-        if (!$container->getParameter('kernel.debug')) {
+        if (! $container->getParameter('kernel.debug')) {
             $uglify_transformer = (new Definition(UglifyJsListener::class, [
-                new Reference('hostnet_asset.node.executable'),
-                $container->getParameter('kernel.cache_dir') . '/assets'
+                new Reference('hostnet_asset.runner.uglify_js')
             ]))
                 ->setPublic(false)
                 ->addTag('kernel.event_listener', ['event' => AssetEvents::READY, 'method' => 'onPreWrite']);
+
+            $cleancss_runner = (new Definition(CleanCssRunner::class, [
+                new Reference('hostnet_asset.node.executable')
+            ]))
+                ->setPublic(false);
 
             $cleancss_transformer = (new Definition(CleanCssListener::class, [
-                new Reference('hostnet_asset.node.executable'),
-                $container->getParameter('kernel.cache_dir') . '/assets'
+                new Reference('hostnet_asset.runner.clean_css')
             ]))
                 ->setPublic(false)
                 ->addTag('kernel.event_listener', ['event' => AssetEvents::READY, 'method' => 'onPreWrite']);
 
+            $container->setDefinition('hostnet_asset.runner.clean_css', $cleancss_runner);
             $container->setDefinition('hostnet_asset.event_listener.uglify', $uglify_transformer);
             $container->setDefinition('hostnet_asset.event_listener.clean_css', $cleancss_transformer);
         }
@@ -196,13 +208,16 @@ final class HostnetAssetExtension extends Extension
         ]))
             ->setPublic(false)
             ->addTag('asset.import_collector');
-        $transpiler = (new Definition(TsContentProcessor::class, [new Reference('hostnet_asset.node.executable')]))
+        $runner     = (new Definition(TsRunner::class, [new Reference('hostnet_asset.node.executable')]))
+            ->setPublic(false);
+        $transpiler = (new Definition(TsContentProcessor::class, [new Reference('hostnet_asset.runner.ts')]))
             ->setPublic(false)
             ->addTag('asset.processor');
 
         $container->setDefinition('hostnet_asset.import_collector.ts.js_fallback_collector', $js_fallback_collector);
         $container->setDefinition('hostnet_asset.import_collector.ts.file_resolver', $file_resolver);
         $container->setDefinition('hostnet_asset.import_collector.ts', $collector);
+        $container->setDefinition('hostnet_asset.runner.ts', $runner);
         $container->setDefinition('hostnet_asset.processor.ts', $transpiler);
     }
 
@@ -211,11 +226,14 @@ final class HostnetAssetExtension extends Extension
         $collector  = (new Definition(LessImportCollector::class))
             ->setPublic(false)
             ->addTag('asset.import_collector');
-        $transpiler = (new Definition(LessContentProcessor::class, [new Reference('hostnet_asset.node.executable')]))
+        $runner     = (new Definition(LessRunner::class, [new Reference('hostnet_asset.node.executable')]))
+            ->setPublic(false);
+        $transpiler = (new Definition(LessContentProcessor::class, [new Reference('hostnet_asset.runner.less')]))
             ->setPublic(false)
             ->addTag('asset.processor');
 
         $container->setDefinition('hostnet_asset.import_collector.less', $collector);
+        $container->setDefinition('hostnet_asset.runner.less', $runner);
         $container->setDefinition('hostnet_asset.processor.less', $transpiler);
     }
 
