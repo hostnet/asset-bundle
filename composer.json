@@ -19,6 +19,7 @@
     "require-dev": {
         "hostnet/phpcs-tool": "^5.2",
         "phpunit/phpunit":    "^6.3",
+        "symfony/yaml":       "^3.3",
         "twig/twig":          "^1.26|^2.0"
     },
     "conflict": {

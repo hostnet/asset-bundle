@@ -77,9 +77,9 @@ final class HostnetAssetExtension extends Extension
         $container->setDefinition('hostnet_asset.runner.uglify_js', $uglify);
 
         // Register the main services.
-        $import_collector = (new Definition(ImportFinder::class, [$container->getParameter('kernel.project_dir')]))
+        $import_finder = (new Definition(ImportFinder::class, [$container->getParameter('kernel.project_dir')]))
             ->setPublic(false);
-        $pipeline         = (new Definition(ContentPipeline::class, [
+        $pipeline      = (new Definition(ContentPipeline::class, [
             new Reference('event_dispatcher'),
             new Reference('logger'),
             new Reference('hostnet_asset.config'),
@@ -87,7 +87,7 @@ final class HostnetAssetExtension extends Extension
             ->setPublic(false);
 
         $bundler = (new Definition(PipelineBundler::class, [
-            new Reference('hostnet_asset.import_collector'),
+            new Reference('hostnet_asset.import_finder'),
             new Reference('hostnet_asset.pipline'),
             new Reference('logger'),
             new Reference('hostnet_asset.config'),
@@ -95,7 +95,7 @@ final class HostnetAssetExtension extends Extension
         ]))
             ->setPublic(true);
 
-        $container->setDefinition('hostnet_asset.import_collector', $import_collector);
+        $container->setDefinition('hostnet_asset.import_finder', $import_finder);
         $container->setDefinition('hostnet_asset.pipline', $pipeline);
         $container->setDefinition('hostnet_asset.bundler', $bundler);
 
@@ -226,7 +226,10 @@ final class HostnetAssetExtension extends Extension
         $collector  = (new Definition(LessImportCollector::class))
             ->setPublic(false)
             ->addTag('asset.import_collector');
-        $runner     = (new Definition(LessRunner::class, [new Reference('hostnet_asset.node.executable')]))
+        $runner     = (new Definition(
+            LessRunner::class,
+            [new Reference('hostnet_asset.node.executable'), new Reference('hostnet_asset.config')]
+        ))
             ->setPublic(false);
         $transpiler = (new Definition(LessContentProcessor::class, [new Reference('hostnet_asset.runner.less')]))
             ->setPublic(false)
@@ -245,7 +248,7 @@ final class HostnetAssetExtension extends Extension
         $transformer = (new Definition(AngularHtmlListener::class, [
             new Reference('hostnet_asset.config'),
             new Reference('hostnet_asset.pipline'),
-            new Reference(ImportFinder::class)
+            new Reference('hostnet_asset.import_finder')
         ]))
             ->setPublic(false)
             ->addTag('kernel.event_listener', ['event' => AssetEvents::POST_PROCESS, 'method' => 'onPostTranspile']);

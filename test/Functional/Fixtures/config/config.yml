@@ -1,0 +1,13 @@
+services:
+    logger:
+        class: Psr\Log\NullLogger
+
+framework:
+    test: true
+    secret: test
+
+hostnet_asset:
+    loaders:
+        ts: true
+        less: true
+        angular: true

@@ -27,10 +27,10 @@ class CollectImportCollectorsPassTest extends TestCase
 
     public function testProcess()
     {
-        $container        = new ContainerBuilder();
-        $import_collector = new Definition();
+        $container     = new ContainerBuilder();
+        $import_finder = new Definition();
 
-        $container->setDefinition('hostnet_asset.import_collector', $import_collector);
+        $container->setDefinition('hostnet_asset.import_finder', $import_finder);
         $container->setDefinition('collector1', (new Definition())->addTag('asset.import_collector'));
         $container->setDefinition('collector2', (new Definition())->addTag('asset.import_collector'));
 
@@ -39,6 +39,6 @@ class CollectImportCollectorsPassTest extends TestCase
         self::assertEquals([
             ['addCollector', [new Reference('collector1')]],
             ['addCollector', [new Reference('collector2')]],
-        ], $import_collector->getMethodCalls());
+        ], $import_finder->getMethodCalls());
     }
 }
