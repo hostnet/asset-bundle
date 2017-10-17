@@ -17,7 +17,7 @@ final class CollectImportCollectorsPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $definition = $container->getDefinition('hostnet_asset.import_collector');
+        $definition = $container->getDefinition('hostnet_asset.import_finder');
 
         foreach ($container->findTaggedServiceIds('asset.import_collector') as $id => $tags) {
             $definition->addMethodCall('addCollector', [new Reference($id)]);
