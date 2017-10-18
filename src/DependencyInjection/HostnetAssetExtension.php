@@ -24,6 +24,7 @@ use Hostnet\Component\Resolver\Event\AssetEvents;
 use Hostnet\Component\Resolver\EventListener\AngularHtmlListener;
 use Hostnet\Component\Resolver\EventListener\CleanCssListener;
 use Hostnet\Component\Resolver\EventListener\UglifyJsListener;
+use Hostnet\Component\Resolver\FileSystem\FileWriter;
 use Hostnet\Component\Resolver\Import\BuiltIn\AngularImportCollector;
 use Hostnet\Component\Resolver\Import\BuiltIn\JsImportCollector;
 use Hostnet\Component\Resolver\Import\BuiltIn\LessImportCollector;
@@ -79,10 +80,14 @@ final class HostnetAssetExtension extends Extension
         // Register the main services.
         $import_finder = (new Definition(ImportFinder::class, [$container->getParameter('kernel.project_dir')]))
             ->setPublic(false);
-        $pipeline      = (new Definition(ContentPipeline::class, [
+        $writer        = (new Definition(FileWriter::class, [$container->getParameter('kernel.project_dir')]))
+            ->setPublic(false);
+
+        $pipeline = (new Definition(ContentPipeline::class, [
             new Reference('event_dispatcher'),
             new Reference('logger'),
             new Reference('hostnet_asset.config'),
+            new Reference('hostnet_asset.file_writer'),
         ]))
             ->setPublic(false);
 
@@ -96,6 +101,7 @@ final class HostnetAssetExtension extends Extension
             ->setPublic(true);
 
         $container->setDefinition('hostnet_asset.import_finder', $import_finder);
+        $container->setDefinition('hostnet_asset.file_writer', $writer);
         $container->setDefinition('hostnet_asset.pipline', $pipeline);
         $container->setDefinition('hostnet_asset.bundler', $bundler);
 

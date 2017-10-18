@@ -65,6 +65,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.node.executable',
             'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_finder',
+            'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
@@ -98,6 +99,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.node.executable',
             'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_finder',
+            'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
@@ -145,6 +147,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.node.executable',
             'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_finder',
+            'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
@@ -196,6 +199,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.node.executable',
             'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_finder',
+            'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
@@ -277,6 +281,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.node.executable',
             'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_finder',
+            'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
@@ -344,6 +349,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.node.executable',
             'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_finder',
+            'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
@@ -412,6 +418,7 @@ class HostnetAssetExtensionTest extends TestCase
             new Reference('event_dispatcher'),
             new Reference('logger'),
             new Reference('hostnet_asset.config'),
+            new Reference('hostnet_asset.file_writer')
         ]))->setPublic(false), $container->getDefinition('hostnet_asset.pipline'));
 
         self::assertEquals((new Definition(PipelineBundler::class, [
