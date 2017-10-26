@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace Hostnet\Bundle\AssetBundle\Command;
 
 use Hostnet\Component\Resolver\Bundler\PipelineBundler;
-use Hostnet\Component\Resolver\ConfigInterface;
+use Hostnet\Component\Resolver\Config\ConfigInterface;
 use Hostnet\Component\Resolver\FileSystem\FileReader;
 use Hostnet\Component\Resolver\FileSystem\FileWriter;
 use Symfony\Component\Console\Command\Command;
@@ -38,8 +38,8 @@ final class CompileCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $reader = new FileReader($this->config->cwd());
-        $writer = new FileWriter($this->config->cwd());
+        $reader = new FileReader($this->config->getProjectRoot());
+        $writer = new FileWriter($this->config->getProjectRoot());
 
         $this->bundler->execute($reader, $writer);
     }

@@ -5,40 +5,55 @@ declare(strict_types=1);
  */
 namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 
-use Hostnet\Component\Resolver\ConfigInterface;
+use Hostnet\Component\Resolver\Config\ConfigInterface;
+use Hostnet\Component\Resolver\Import\Nodejs\Executable;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final class ArrayConfig implements ConfigInterface
 {
     private $is_dev;
-    private $cwd;
+    private $project_root;
     private $include_paths;
     private $entry_points;
     private $asset_files;
     private $output_folder;
-    private $web_root;
     private $source_root;
     private $cache_dir;
+    private $plugins;
+    private $node_js_executable;
+    private $logger;
+    private $event_dispatcher;
 
     public function __construct(
         bool $is_dev,
-        string $cwd,
+        string $project_root,
         array $include_paths,
         array $entry_points,
         array $asset_files,
         string $output_folder,
-        string $web_root,
         string $source_root,
-        string $cache_dir
+        string $cache_dir,
+        array $plugins,
+        Executable $node_js_executable,
+        EventDispatcherInterface $event_dispatcher = null,
+        LoggerInterface $logger = null
     ) {
         $this->is_dev        = $is_dev;
-        $this->cwd           = $cwd;
+        $this->project_root  = $project_root;
         $this->include_paths = $include_paths;
         $this->entry_points  = $entry_points;
         $this->asset_files   = $asset_files;
         $this->output_folder = $output_folder;
-        $this->web_root      = $web_root;
         $this->source_root   = $source_root;
         $this->cache_dir     = $cache_dir;
+        $this->plugins       = $plugins;
+
+        $this->node_js_executable = $node_js_executable;
+        $this->event_dispatcher   = $event_dispatcher ?? new EventDispatcher();
+        $this->logger             = $logger ?? new NullLogger();
     }
 
     /**
@@ -60,9 +75,9 @@ final class ArrayConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function cwd(): string
+    public function getProjectRoot(): string
     {
-        return $this->cwd;
+        return $this->project_root;
     }
 
     /**
@@ -92,14 +107,6 @@ final class ArrayConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getWebRoot(): string
-    {
-        return $this->web_root;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getSourceRoot(): string
     {
         return $this->source_root;
@@ -111,5 +118,37 @@ final class ArrayConfig implements ConfigInterface
     public function getCacheDir(): string
     {
         return $this->cache_dir;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPlugins(): array
+    {
+        return $this->plugins;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getNodeJsExecutable(): Executable
+    {
+        return $this->node_js_executable;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLogger(): LoggerInterface
+    {
+        return $this->logger;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEventDispatcher(): EventDispatcherInterface
+    {
+        return $this->event_dispatcher;
     }
 }

@@ -5,7 +5,7 @@
 declare(strict_types=1);
 namespace Hostnet\Bundle\AssetBundle\Twig;
 
-use Hostnet\Component\Resolver\ConfigInterface;
+use Hostnet\Component\Resolver\Config\ConfigInterface;
 use PHPUnit\Framework\TestCase;
 
 /**

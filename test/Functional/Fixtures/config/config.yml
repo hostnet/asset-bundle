@@ -7,7 +7,7 @@ framework:
     secret: test
 
 hostnet_asset:
-    loaders:
-        ts: true
-        less: true
-        angular: true
+    plugins:
+        Hostnet\Component\Resolver\Plugin\LessPlugin: true
+        Hostnet\Component\Resolver\Plugin\TsPlugin: true
+        Hostnet\Component\Resolver\Plugin\AngularPlugin: true
