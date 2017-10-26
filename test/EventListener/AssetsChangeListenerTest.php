@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace Hostnet\Bundle\AssetBundle\EventListener;
 
 use Hostnet\Component\Resolver\Bundler\PipelineBundler;
-use Hostnet\Component\Resolver\ConfigInterface;
+use Hostnet\Component\Resolver\Config\ConfigInterface;
 use Hostnet\Component\Resolver\FileSystem\ReaderInterface;
 use Hostnet\Component\Resolver\FileSystem\WriterInterface;
 use PHPUnit\Framework\TestCase;
@@ -42,7 +42,7 @@ class AssetsChangeListenerTest extends TestCase
 
     public function testOnKernelResponse()
     {
-        $this->config->cwd()->willReturn(__DIR__);
+        $this->config->getProjectRoot()->willReturn(__DIR__);
 
         $this->bundler
             ->execute(Argument::type(ReaderInterface::class), Argument::type(WriterInterface::class))
@@ -58,7 +58,7 @@ class AssetsChangeListenerTest extends TestCase
 
     public function testOnKernelResponseSubRequest()
     {
-        $this->config->cwd()->willReturn(__DIR__);
+        $this->config->getProjectRoot()->willReturn(__DIR__);
 
         $this->bundler
             ->execute()

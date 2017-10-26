@@ -13,18 +13,14 @@ use Hostnet\Component\Resolver\Bundler\Pipeline\ContentPipeline;
 use Hostnet\Component\Resolver\Bundler\PipelineBundler;
 use Hostnet\Component\Resolver\Bundler\Processor\IdentityProcessor;
 use Hostnet\Component\Resolver\Bundler\Processor\JsonProcessor;
-use Hostnet\Component\Resolver\Bundler\Processor\LessContentProcessor;
 use Hostnet\Component\Resolver\Bundler\Processor\ModuleProcessor;
-use Hostnet\Component\Resolver\Bundler\Processor\TsContentProcessor;
-use Hostnet\Component\Resolver\Event\AssetEvents;
-use Hostnet\Component\Resolver\EventListener\AngularHtmlListener;
-use Hostnet\Component\Resolver\Import\BuiltIn\AngularImportCollector;
 use Hostnet\Component\Resolver\Import\BuiltIn\JsImportCollector;
-use Hostnet\Component\Resolver\Import\BuiltIn\LessImportCollector;
-use Hostnet\Component\Resolver\Import\BuiltIn\TsImportCollector;
 use Hostnet\Component\Resolver\Import\ImportFinder;
 use Hostnet\Component\Resolver\Import\Nodejs\Executable;
 use Hostnet\Component\Resolver\Import\Nodejs\FileResolver;
+use Hostnet\Component\Resolver\Plugin\AngularPlugin;
+use Hostnet\Component\Resolver\Plugin\LessPlugin;
+use Hostnet\Component\Resolver\Plugin\TsPlugin;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -61,8 +57,8 @@ class HostnetAssetExtensionTest extends TestCase
 
         self::assertEquals([
             'service_container',
-            'hostnet_asset.config',
             'hostnet_asset.node.executable',
+            'hostnet_asset.config',
             'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
@@ -95,8 +91,8 @@ class HostnetAssetExtensionTest extends TestCase
 
         self::assertEquals([
             'service_container',
-            'hostnet_asset.config',
             'hostnet_asset.node.executable',
+            'hostnet_asset.config',
             'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
@@ -114,17 +110,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.processor.html',
         ], array_keys($container->getDefinitions()));
 
-        self::assertEquals((new Definition(ArrayConfig::class, [
-            true,
-            __DIR__,
-            [],
-            [],
-            [],
-            'dev',
-            'web',
-            'app/Resources/assets',
-            __DIR__ . '/assets',
-        ]))->setPublic(false), $container->getDefinition('hostnet_asset.config'));
+        $this->assertConfig($container, true, 'web/dev');
 
         $this->validateBaseServiceDefinitions($container);
     }
@@ -143,8 +129,8 @@ class HostnetAssetExtensionTest extends TestCase
 
         self::assertEquals([
             'service_container',
-            'hostnet_asset.config',
             'hostnet_asset.node.executable',
+            'hostnet_asset.config',
             'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
@@ -165,17 +151,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.processor.html',
         ], array_keys($container->getDefinitions()));
 
-        self::assertEquals((new Definition(ArrayConfig::class, [
-            false,
-            __DIR__,
-            [],
-            [],
-            [],
-            'dist',
-            'web',
-            'app/Resources/assets',
-            __DIR__ . '/assets',
-        ]))->setPublic(false), $container->getDefinition('hostnet_asset.config'));
+        $this->assertConfig($container, false, 'web/dist');
 
         $this->validateBaseServiceDefinitions($container);
     }
@@ -190,13 +166,14 @@ class HostnetAssetExtensionTest extends TestCase
 
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
-            'loaders' => ['ts' => ['enabled' => true]]
+            'plugins' => [TsPlugin::class => true]
         ]], $container);
 
         self::assertEquals([
             'service_container',
-            'hostnet_asset.config',
             'hostnet_asset.node.executable',
+            TsPlugin::class,
+            'hostnet_asset.config',
             'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
@@ -212,54 +189,11 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.processor.json',
             'hostnet_asset.processor.css',
             'hostnet_asset.processor.html',
-            'hostnet_asset.import_collector.ts.js_fallback_collector',
-            'hostnet_asset.import_collector.ts.file_resolver',
-            'hostnet_asset.import_collector.ts',
-            'hostnet_asset.runner.ts',
-            'hostnet_asset.processor.ts',
         ], array_keys($container->getDefinitions()));
 
-        self::assertEquals((new Definition(ArrayConfig::class, [
-            true,
-            __DIR__,
-            [],
-            [],
-            [],
-            'dev',
-            'web',
-            'app/Resources/assets',
-            __DIR__ . '/assets',
-        ]))->setPublic(false), $container->getDefinition('hostnet_asset.config'));
+        $this->assertConfig($container, true, 'web/dev', [TsPlugin::class]);
 
         $this->validateBaseServiceDefinitions($container);
-
-        self::assertEquals((new Definition(JsImportCollector::class, [
-            new Reference('hostnet_asset.import_collector.ts.file_resolver'),
-        ]))->setPublic(false), $container->getDefinition('hostnet_asset.import_collector.ts.js_fallback_collector'));
-
-        self::assertEquals((new Definition(FileResolver::class, [
-            new Reference('hostnet_asset.config'),
-            ['.ts', '.js', '.json', '.node']
-        ]))->setPublic(false), $container->getDefinition('hostnet_asset.import_collector.ts.file_resolver'));
-
-        self::assertEquals(
-            (new Definition(TsImportCollector::class, [
-                new Reference('hostnet_asset.import_collector.ts.js_fallback_collector'),
-                new Reference('hostnet_asset.import_collector.ts.file_resolver'),
-            ]))
-                ->setPublic(false)
-                ->addTag('asset.import_collector'),
-            $container->getDefinition('hostnet_asset.import_collector.ts')
-        );
-
-        self::assertEquals(
-            (new Definition(TsContentProcessor::class, [
-                new Reference('hostnet_asset.runner.ts'),
-            ]))
-                ->setPublic(false)
-                ->addTag('asset.processor'),
-            $container->getDefinition('hostnet_asset.processor.ts')
-        );
     }
 
     public function testLoadLess()
@@ -272,13 +206,14 @@ class HostnetAssetExtensionTest extends TestCase
 
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
-            'loaders' => ['less' => ['enabled' => true]]
+            'plugins' => [LessPlugin::class => true]
         ]], $container);
 
         self::assertEquals([
             'service_container',
-            'hostnet_asset.config',
             'hostnet_asset.node.executable',
+            LessPlugin::class,
+            'hostnet_asset.config',
             'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
@@ -294,40 +229,11 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.processor.json',
             'hostnet_asset.processor.css',
             'hostnet_asset.processor.html',
-            'hostnet_asset.import_collector.less',
-            'hostnet_asset.runner.less',
-            'hostnet_asset.processor.less',
         ], array_keys($container->getDefinitions()));
 
-        self::assertEquals((new Definition(ArrayConfig::class, [
-            true,
-            __DIR__,
-            [],
-            [],
-            [],
-            'dev',
-            'web',
-            'app/Resources/assets',
-            __DIR__ . '/assets',
-        ]))->setPublic(false), $container->getDefinition('hostnet_asset.config'));
+        $this->assertConfig($container, true, 'web/dev', [LessPlugin::class]);
 
         $this->validateBaseServiceDefinitions($container);
-
-        self::assertEquals(
-            (new Definition(LessImportCollector::class))
-                ->setPublic(false)
-                ->addTag('asset.import_collector'),
-            $container->getDefinition('hostnet_asset.import_collector.less')
-        );
-
-        self::assertEquals(
-            (new Definition(LessContentProcessor::class, [
-                new Reference('hostnet_asset.runner.less'),
-            ]))
-                ->setPublic(false)
-                ->addTag('asset.processor'),
-            $container->getDefinition('hostnet_asset.processor.less')
-        );
     }
 
     public function testLoadAngular()
@@ -340,13 +246,14 @@ class HostnetAssetExtensionTest extends TestCase
 
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
-            'loaders' => ['angular' => ['enabled' => true]]
+            'plugins' => [AngularPlugin::class => true]
         ]], $container);
 
         self::assertEquals([
             'service_container',
-            'hostnet_asset.config',
             'hostnet_asset.node.executable',
+            AngularPlugin::class,
+            'hostnet_asset.config',
             'hostnet_asset.runner.uglify_js',
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
@@ -362,44 +269,26 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.processor.json',
             'hostnet_asset.processor.css',
             'hostnet_asset.processor.html',
-            'hostnet_asset.import_collector.angular',
-            'hostnet_asset.event_listener.angular',
         ], array_keys($container->getDefinitions()));
 
-        self::assertEquals((new Definition(ArrayConfig::class, [
-            true,
-            __DIR__,
-            [],
-            [],
-            [],
-            'dev',
-            'web',
-            'app/Resources/assets',
-            __DIR__ . '/assets',
-        ]))->setPublic(false), $container->getDefinition('hostnet_asset.config'));
+        $this->assertConfig($container, true, 'web/dev', [AngularPlugin::class]);
 
         $this->validateBaseServiceDefinitions($container);
+    }
 
-        self::assertEquals(
-            (new Definition(AngularImportCollector::class))
-                ->setPublic(false)
-                ->addTag('asset.import_collector'),
-            $container->getDefinition('hostnet_asset.import_collector.angular')
-        );
+    private function assertConfig(ContainerBuilder $container, bool $is_dev, string $output_folder, array $plugins = [])
+    {
+        $definition = $container->getDefinition('hostnet_asset.config');
 
-        self::assertEquals(
-            (new Definition(AngularHtmlListener::class, [
-                new Reference('hostnet_asset.config'),
-                new Reference('hostnet_asset.pipline'),
-                new Reference('hostnet_asset.import_finder')
-            ]))
-                ->setPublic(false)
-                ->addTag('kernel.event_listener', [
-                    'event' => AssetEvents::POST_PROCESS,
-                    'method' => 'onPostTranspile'
-                ]),
-            $container->getDefinition('hostnet_asset.event_listener.angular')
-        );
+        self::assertSame($is_dev, $definition->getArgument(0));
+        self::assertSame(__DIR__, $definition->getArgument(1));
+        self::assertSame($output_folder, $definition->getArgument(5));
+
+        $plugin_references = [];
+        foreach ($plugins as $plugin) {
+            $plugin_references[] = new Reference($plugin);
+        }
+        self::assertEquals($plugin_references, $definition->getArgument(8));
     }
 
     private function validateBaseServiceDefinitions(ContainerBuilder $container)
@@ -525,10 +414,10 @@ class HostnetAssetExtensionTest extends TestCase
 
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
-            'loaders' => [
-                'ts' => ['enabled' => true],
-                'less' => ['enabled' => true],
-                'angular' => ['enabled' => true],
+            'plugins' => [
+                TsPlugin::class => true,
+                LessPlugin::class => true,
+                AngularPlugin::class => true
             ]
         ]], $container);
 

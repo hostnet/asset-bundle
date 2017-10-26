@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace Hostnet\Bundle\AssetBundle\EventListener;
 
 use Hostnet\Component\Resolver\Bundler\PipelineBundler;
-use Hostnet\Component\Resolver\ConfigInterface;
+use Hostnet\Component\Resolver\Config\ConfigInterface;
 use Hostnet\Component\Resolver\FileSystem\FileReader;
 use Hostnet\Component\Resolver\FileSystem\FileWriter;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -38,8 +38,8 @@ final class AssetsChangeListener
             return;
         }
 
-        $reader = new FileReader($this->config->cwd());
-        $writer = new FileWriter($this->config->cwd());
+        $reader = new FileReader($this->config->getProjectRoot());
+        $writer = new FileWriter($this->config->getProjectRoot());
 
         $this->bundler->execute($reader, $writer);
     }
