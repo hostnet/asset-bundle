@@ -102,7 +102,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.twig.extension',
         ], array_keys($container->getDefinitions()));
 
-        $this->assertConfig($container, true, 'web/dev');
+        $this->assertConfig($container, true, 'dev');
 
         $this->validateBaseServiceDefinitions($container);
     }
@@ -136,7 +136,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.twig.extension',
         ], array_keys($container->getDefinitions()));
 
-        $this->assertConfig($container, false, 'web/dist');
+        $this->assertConfig($container, false, 'dist');
 
         $this->validateBaseServiceDefinitions($container);
     }
@@ -172,7 +172,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.twig.extension',
         ], array_keys($container->getDefinitions()));
 
-        $this->assertConfig($container, true, 'web/dev', [TsPlugin::class]);
+        $this->assertConfig($container, true, 'dev', [TsPlugin::class]);
 
         $this->validateBaseServiceDefinitions($container);
     }
@@ -208,7 +208,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.twig.extension',
         ], array_keys($container->getDefinitions()));
 
-        $this->assertConfig($container, true, 'web/dev', [LessPlugin::class]);
+        $this->assertConfig($container, true, 'dev', [LessPlugin::class]);
 
         $this->validateBaseServiceDefinitions($container);
     }
@@ -244,7 +244,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.twig.extension',
         ], array_keys($container->getDefinitions()));
 
-        $this->assertConfig($container, true, 'web/dev', [AngularPlugin::class]);
+        $this->assertConfig($container, true, 'dev', [AngularPlugin::class]);
 
         $this->validateBaseServiceDefinitions($container);
     }
@@ -255,13 +255,14 @@ class HostnetAssetExtensionTest extends TestCase
 
         self::assertSame($is_dev, $definition->getArgument(0));
         self::assertSame(__DIR__, $definition->getArgument(1));
-        self::assertSame($output_folder, $definition->getArgument(5));
+        self::assertSame('web', $definition->getArgument(5));
+        self::assertSame($output_folder, $definition->getArgument(6));
 
         $plugin_references = [];
         foreach ($plugins as $plugin) {
             $plugin_references[] = new Reference($plugin);
         }
-        self::assertEquals($plugin_references, $definition->getArgument(8));
+        self::assertEquals($plugin_references, $definition->getArgument(9));
     }
 
     private function validateBaseServiceDefinitions(ContainerBuilder $container)

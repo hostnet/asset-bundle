@@ -26,6 +26,6 @@ final class AssetExtension extends \Twig_Extension
 
     public function assetUrl(string $name): string
     {
-        return sprintf('/%s/%s', $this->config->getOutputFolder(), $name);
+        return sprintf('/%s/%s', $this->config->getOutputFolder(false), $name);
     }
 }

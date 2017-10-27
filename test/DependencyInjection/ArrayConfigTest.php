@@ -26,7 +26,8 @@ class ArrayConfigTest extends TestCase
             ['phpunit'],
             ['foo'],
             ['bar'],
-            'web/phpunit',
+            'web',
+            'phpunit',
             'src',
             'var',
             $plugins,
@@ -39,6 +40,7 @@ class ArrayConfigTest extends TestCase
         self::assertEquals(['foo'], $config->getEntryPoints());
         self::assertEquals(['bar'], $config->getAssetFiles());
         self::assertEquals('web/phpunit', $config->getOutputFolder());
+        self::assertEquals('phpunit', $config->getOutputFolder(false));
         self::assertEquals('src', $config->getSourceRoot());
         self::assertEquals('var', $config->getCacheDir());
         self::assertSame($plugins, $config->getPlugins());
