@@ -167,6 +167,9 @@ final class HostnetAssetExtension extends Extension
 
     private function configureEventListeners(ContainerBuilder $container)
     {
+        if (! $container->getParameter('kernel.debug')) {
+            return;
+        }
         $change_listener = (new Definition(AssetsChangeListener::class, [
             new Reference('hostnet_asset.bundler'),
             new Reference('hostnet_asset.config'),

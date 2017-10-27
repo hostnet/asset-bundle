@@ -131,7 +131,6 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.plugin.api',
             'hostnet_asset.plugin.activator',
             'hostnet_asset.bundler',
-            'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
             'hostnet_asset.twig.extension',
         ], array_keys($container->getDefinitions()));
@@ -298,19 +297,6 @@ class HostnetAssetExtensionTest extends TestCase
         );
 
         self::assertEquals(
-            (new Definition(AssetsChangeListener::class, [
-                new Reference('hostnet_asset.bundler'),
-                new Reference('hostnet_asset.config'),
-            ]))
-                ->setPublic(false)
-                ->addTag('kernel.event_listener', [
-                    'event' => KernelEvents::RESPONSE,
-                    'method' => 'onKernelResponse'
-                ]),
-            $container->getDefinition('hostnet_asset.listener.assets_change')
-        );
-
-        self::assertEquals(
             (new Definition(CompileCommand::class, [
                 new Reference('hostnet_asset.bundler'),
                 new Reference('hostnet_asset.config'),
@@ -327,6 +313,26 @@ class HostnetAssetExtensionTest extends TestCase
                 ->setPublic(false)
                 ->addTag('twig.extension'),
             $container->getDefinition('hostnet_asset.twig.extension')
+        );
+
+        if ($container->getParameter('kernel.debug')) {
+            $this->validateDebugServiceDefinitions($container);
+        }
+    }
+
+    private function validateDebugServiceDefinitions(ContainerBuilder $container)
+    {
+        self::assertEquals(
+            (new Definition(AssetsChangeListener::class, [
+                new Reference('hostnet_asset.bundler'),
+                new Reference('hostnet_asset.config'),
+            ]))
+                ->setPublic(false)
+                ->addTag('kernel.event_listener', [
+                    'event' => KernelEvents::RESPONSE,
+                    'method' => 'onKernelResponse'
+                ]),
+            $container->getDefinition('hostnet_asset.listener.assets_change')
         );
     }
 
