@@ -63,17 +63,13 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
+            'hostnet_asset.cache',
+            'hostnet_asset.plugin.api',
+            'hostnet_asset.plugin.activator',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
             'hostnet_asset.twig.extension',
-            'hostnet_asset.import_collector.js.file_resolver',
-            'hostnet_asset.import_collector.js',
-            'hostnet_asset.processor.module',
-            'hostnet_asset.processor.js',
-            'hostnet_asset.processor.json',
-            'hostnet_asset.processor.css',
-            'hostnet_asset.processor.html',
         ], array_keys($container->getDefinitions()));
     }
 
@@ -97,17 +93,13 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
+            'hostnet_asset.cache',
+            'hostnet_asset.plugin.api',
+            'hostnet_asset.plugin.activator',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
             'hostnet_asset.twig.extension',
-            'hostnet_asset.import_collector.js.file_resolver',
-            'hostnet_asset.import_collector.js',
-            'hostnet_asset.processor.module',
-            'hostnet_asset.processor.js',
-            'hostnet_asset.processor.json',
-            'hostnet_asset.processor.css',
-            'hostnet_asset.processor.html',
         ], array_keys($container->getDefinitions()));
 
         $this->assertConfig($container, true, 'web/dev');
@@ -135,20 +127,13 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
+            'hostnet_asset.cache',
+            'hostnet_asset.plugin.api',
+            'hostnet_asset.plugin.activator',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
             'hostnet_asset.twig.extension',
-            'hostnet_asset.runner.clean_css',
-            'hostnet_asset.event_listener.uglify',
-            'hostnet_asset.event_listener.clean_css',
-            'hostnet_asset.import_collector.js.file_resolver',
-            'hostnet_asset.import_collector.js',
-            'hostnet_asset.processor.module',
-            'hostnet_asset.processor.js',
-            'hostnet_asset.processor.json',
-            'hostnet_asset.processor.css',
-            'hostnet_asset.processor.html',
         ], array_keys($container->getDefinitions()));
 
         $this->assertConfig($container, false, 'web/dist');
@@ -178,17 +163,13 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
+            'hostnet_asset.cache',
+            'hostnet_asset.plugin.api',
+            'hostnet_asset.plugin.activator',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
             'hostnet_asset.twig.extension',
-            'hostnet_asset.import_collector.js.file_resolver',
-            'hostnet_asset.import_collector.js',
-            'hostnet_asset.processor.module',
-            'hostnet_asset.processor.js',
-            'hostnet_asset.processor.json',
-            'hostnet_asset.processor.css',
-            'hostnet_asset.processor.html',
         ], array_keys($container->getDefinitions()));
 
         $this->assertConfig($container, true, 'web/dev', [TsPlugin::class]);
@@ -218,17 +199,13 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
+            'hostnet_asset.cache',
+            'hostnet_asset.plugin.api',
+            'hostnet_asset.plugin.activator',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
             'hostnet_asset.twig.extension',
-            'hostnet_asset.import_collector.js.file_resolver',
-            'hostnet_asset.import_collector.js',
-            'hostnet_asset.processor.module',
-            'hostnet_asset.processor.js',
-            'hostnet_asset.processor.json',
-            'hostnet_asset.processor.css',
-            'hostnet_asset.processor.html',
         ], array_keys($container->getDefinitions()));
 
         $this->assertConfig($container, true, 'web/dev', [LessPlugin::class]);
@@ -258,17 +235,13 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
+            'hostnet_asset.cache',
+            'hostnet_asset.plugin.api',
+            'hostnet_asset.plugin.activator',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
             'hostnet_asset.twig.extension',
-            'hostnet_asset.import_collector.js.file_resolver',
-            'hostnet_asset.import_collector.js',
-            'hostnet_asset.processor.module',
-            'hostnet_asset.processor.js',
-            'hostnet_asset.processor.json',
-            'hostnet_asset.processor.css',
-            'hostnet_asset.processor.html',
         ], array_keys($container->getDefinitions()));
 
         $this->assertConfig($container, true, 'web/dev', [AngularPlugin::class]);
@@ -310,13 +283,18 @@ class HostnetAssetExtensionTest extends TestCase
             new Reference('hostnet_asset.file_writer')
         ]))->setPublic(false), $container->getDefinition('hostnet_asset.pipline'));
 
-        self::assertEquals((new Definition(PipelineBundler::class, [
-            new Reference('hostnet_asset.import_finder'),
-            new Reference('hostnet_asset.pipline'),
-            new Reference('logger'),
-            new Reference('hostnet_asset.config'),
-            new Reference('hostnet_asset.runner.uglify_js'),
-        ]))->setPublic(true), $container->getDefinition('hostnet_asset.bundler'));
+        self::assertEquals(
+            (new Definition(PipelineBundler::class, [
+                new Reference('hostnet_asset.import_finder'),
+                new Reference('hostnet_asset.pipline'),
+                new Reference('logger'),
+                new Reference('hostnet_asset.config'),
+                new Reference('hostnet_asset.runner.uglify_js'),
+            ]))
+                ->setPublic(true)
+                ->setConfigurator([new Reference('hostnet_asset.plugin.activator'), 'ensurePluginsAreActivated']),
+            $container->getDefinition('hostnet_asset.bundler')
+        );
 
         self::assertEquals(
             (new Definition(AssetsChangeListener::class, [
@@ -348,55 +326,6 @@ class HostnetAssetExtensionTest extends TestCase
                 ->setPublic(false)
                 ->addTag('twig.extension'),
             $container->getDefinition('hostnet_asset.twig.extension')
-        );
-
-        self::assertEquals((new Definition(FileResolver::class, [
-            new Reference('hostnet_asset.config'),
-            ['.js', '.json', '.node']
-        ]))->setPublic(false), $container->getDefinition('hostnet_asset.import_collector.js.file_resolver'));
-
-        self::assertEquals(
-            (new Definition(JsImportCollector::class, [
-                new Reference('hostnet_asset.import_collector.js.file_resolver'),
-            ]))
-                ->setPublic(false)
-                ->addTag('asset.import_collector'),
-            $container->getDefinition('hostnet_asset.import_collector.js')
-        );
-
-        self::assertEquals(
-            (new Definition(ModuleProcessor::class, []))
-                ->setPublic(false)
-                ->addTag('asset.processor'),
-            $container->getDefinition('hostnet_asset.processor.module')
-        );
-
-        self::assertEquals(
-            (new Definition(IdentityProcessor::class, ['js', ContentState::PROCESSED]))
-                ->setPublic(false)
-                ->addTag('asset.processor'),
-            $container->getDefinition('hostnet_asset.processor.js')
-        );
-
-        self::assertEquals(
-            (new Definition(JsonProcessor::class, []))
-                ->setPublic(false)
-                ->addTag('asset.processor'),
-            $container->getDefinition('hostnet_asset.processor.json')
-        );
-
-        self::assertEquals(
-            (new Definition(IdentityProcessor::class, ['css']))
-                ->setPublic(false)
-                ->addTag('asset.processor'),
-            $container->getDefinition('hostnet_asset.processor.css')
-        );
-
-        self::assertEquals(
-            (new Definition(IdentityProcessor::class, ['html']))
-                ->setPublic(false)
-                ->addTag('asset.processor'),
-            $container->getDefinition('hostnet_asset.processor.html')
         );
     }
 

@@ -8,24 +8,19 @@ namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 use Hostnet\Bundle\AssetBundle\Command\CompileCommand;
 use Hostnet\Bundle\AssetBundle\EventListener\AssetsChangeListener;
 use Hostnet\Bundle\AssetBundle\Twig\AssetExtension;
-use Hostnet\Component\Resolver\Bundler\ContentState;
 use Hostnet\Component\Resolver\Bundler\Pipeline\ContentPipeline;
 use Hostnet\Component\Resolver\Bundler\PipelineBundler;
-use Hostnet\Component\Resolver\Bundler\Processor\IdentityProcessor;
-use Hostnet\Component\Resolver\Bundler\Processor\JsonProcessor;
-use Hostnet\Component\Resolver\Bundler\Processor\ModuleProcessor;
-use Hostnet\Component\Resolver\Bundler\Runner\CleanCssRunner;
 use Hostnet\Component\Resolver\Bundler\Runner\UglifyJsRunner;
-use Hostnet\Component\Resolver\Event\AssetEvents;
-use Hostnet\Component\Resolver\EventListener\CleanCssListener;
-use Hostnet\Component\Resolver\EventListener\UglifyJsListener;
+use Hostnet\Component\Resolver\Cache\Cache;
 use Hostnet\Component\Resolver\FileSystem\FileWriter;
-use Hostnet\Component\Resolver\Import\BuiltIn\JsImportCollector;
 use Hostnet\Component\Resolver\Import\ImportFinder;
 use Hostnet\Component\Resolver\Import\Nodejs\Executable;
-use Hostnet\Component\Resolver\Import\Nodejs\FileResolver;
 use Hostnet\Component\Resolver\Plugin\AngularPlugin;
+use Hostnet\Component\Resolver\Plugin\CorePlugin;
 use Hostnet\Component\Resolver\Plugin\LessPlugin;
+use Hostnet\Component\Resolver\Plugin\MinifyPlugin;
+use Hostnet\Component\Resolver\Plugin\PluginActivator;
+use Hostnet\Component\Resolver\Plugin\PluginApi;
 use Hostnet\Component\Resolver\Plugin\TsPlugin;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -53,7 +48,7 @@ final class HostnetAssetExtension extends Extension
         $container->setDefinition('hostnet_asset.node.executable', $node_executable);
 
         $plugins  = [];
-        $built_in = [TsPlugin::class, LessPlugin::class, AngularPlugin::class];
+        $built_in = [CorePlugin::class, TsPlugin::class, LessPlugin::class, AngularPlugin::class, MinifyPlugin::class];
         foreach ($config['plugins'] as $name => $is_enabled) {
             if (! $is_enabled) {
                 continue;
@@ -69,6 +64,7 @@ final class HostnetAssetExtension extends Extension
             $plugins[] = $this->configurePlugin($name, $container);
         }
 
+        $cache_dir = $container->getParameter('kernel.cache_dir') . '/assets';
         // Create config
         $bundler_config = (new Definition(ArrayConfig::class, [
             $container->getParameter('kernel.debug'),
@@ -78,7 +74,7 @@ final class HostnetAssetExtension extends Extension
             $config['assets'],
             $container->getParameter('kernel.debug') ? $config['output_folder_dev'] : $config['output_folder'],
             $config['source_root'],
-            $container->getParameter('kernel.cache_dir') . '/assets',
+            $cache_dir,
             $plugins,
             new Reference('hostnet_asset.node.executable'),
             new Reference('event_dispatcher'),
@@ -106,6 +102,21 @@ final class HostnetAssetExtension extends Extension
         ]))
             ->setPublic(false);
 
+        $cache = (new Definition(Cache::class, [$cache_dir . '/dependencies']))
+            ->setPublic(false)
+            ->addMethodCall('load');
+
+        $plugin_api = (new Definition(PluginApi::class, [
+            new Reference('hostnet_asset.pipline'),
+            new Reference('hostnet_asset.import_finder'),
+            new Reference('hostnet_asset.config'),
+            new Reference('hostnet_asset.cache')
+        ]))
+            ->setPublic(false);
+
+        $plugin_activator = (new Definition(PluginActivator::class, [new Reference('hostnet_asset.plugin.api')]))
+            ->setPublic(false);
+
         $bundler = (new Definition(PipelineBundler::class, [
             new Reference('hostnet_asset.import_finder'),
             new Reference('hostnet_asset.pipline'),
@@ -113,11 +124,15 @@ final class HostnetAssetExtension extends Extension
             new Reference('hostnet_asset.config'),
             new Reference('hostnet_asset.runner.uglify_js'),
         ]))
+            ->setConfigurator([new Reference('hostnet_asset.plugin.activator'), 'ensurePluginsAreActivated'])
             ->setPublic(true);
 
         $container->setDefinition('hostnet_asset.import_finder', $import_finder);
         $container->setDefinition('hostnet_asset.file_writer', $writer);
         $container->setDefinition('hostnet_asset.pipline', $pipeline);
+        $container->setDefinition('hostnet_asset.cache', $cache);
+        $container->setDefinition('hostnet_asset.plugin.api', $plugin_api);
+        $container->setDefinition('hostnet_asset.plugin.activator', $plugin_activator);
         $container->setDefinition('hostnet_asset.bundler', $bundler);
 
         // Register event listeners
@@ -126,72 +141,6 @@ final class HostnetAssetExtension extends Extension
         $this->configureCommands($container);
         // Register twig extensions
         $this->configureTwig($container);
-
-        // Configure the loaders
-        $this->configureDefaultLoaders($container);
-    }
-
-    private function configureDefaultLoaders(ContainerBuilder $container)
-    {
-        $js_file_resolver = (new Definition(FileResolver::class, [
-            new Reference('hostnet_asset.config'),
-            ['.js', '.json', '.node']
-        ]))
-            ->setPublic(false);
-
-        $js_import_collector = (new Definition(JsImportCollector::class, [
-            new Reference('hostnet_asset.import_collector.js.file_resolver')
-        ]))
-            ->setPublic(false)
-            ->addTag('asset.import_collector');
-
-        $js_processor     = (new Definition(IdentityProcessor::class, ['js', ContentState::PROCESSED]))
-            ->setPublic(false)
-            ->addTag('asset.processor');
-        $css_processor    = (new Definition(IdentityProcessor::class, ['css']))
-            ->setPublic(false)
-            ->addTag('asset.processor');
-        $html_processor   = (new Definition(IdentityProcessor::class, ['html']))
-            ->setPublic(false)
-            ->addTag('asset.processor');
-        $module_processor = (new Definition(ModuleProcessor::class))
-            ->setPublic(false)
-            ->addTag('asset.processor');
-        $json_processor   = (new Definition(JsonProcessor::class))
-            ->setPublic(false)
-            ->addTag('asset.processor');
-
-        // Only enable the UglifyJs Transformer in non-dev
-        if (! $container->getParameter('kernel.debug')) {
-            $uglify_transformer = (new Definition(UglifyJsListener::class, [
-                new Reference('hostnet_asset.runner.uglify_js')
-            ]))
-                ->setPublic(false)
-                ->addTag('kernel.event_listener', ['event' => AssetEvents::READY, 'method' => 'onPreWrite']);
-
-            $cleancss_runner = (new Definition(CleanCssRunner::class, [
-                new Reference('hostnet_asset.node.executable')
-            ]))
-                ->setPublic(false);
-
-            $cleancss_transformer = (new Definition(CleanCssListener::class, [
-                new Reference('hostnet_asset.runner.clean_css')
-            ]))
-                ->setPublic(false)
-                ->addTag('kernel.event_listener', ['event' => AssetEvents::READY, 'method' => 'onPreWrite']);
-
-            $container->setDefinition('hostnet_asset.runner.clean_css', $cleancss_runner);
-            $container->setDefinition('hostnet_asset.event_listener.uglify', $uglify_transformer);
-            $container->setDefinition('hostnet_asset.event_listener.clean_css', $cleancss_transformer);
-        }
-
-        $container->setDefinition('hostnet_asset.import_collector.js.file_resolver', $js_file_resolver);
-        $container->setDefinition('hostnet_asset.import_collector.js', $js_import_collector);
-        $container->setDefinition('hostnet_asset.processor.module', $module_processor);
-        $container->setDefinition('hostnet_asset.processor.js', $js_processor);
-        $container->setDefinition('hostnet_asset.processor.json', $json_processor);
-        $container->setDefinition('hostnet_asset.processor.css', $css_processor);
-        $container->setDefinition('hostnet_asset.processor.html', $html_processor);
     }
 
     private function configurePlugin($class, ContainerBuilder $container): Reference

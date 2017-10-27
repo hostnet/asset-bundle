@@ -2,12 +2,16 @@
 /**
  * @copyright 2017 Hostnet B.V.
  */
+
 declare(strict_types=1);
 
 namespace Hostnet\Bundle\AssetBundle\Functional;
 
 use Hostnet\Bundle\AssetBundle\Functional\Fixtures\TestKernel;
 use Hostnet\Component\Resolver\Bundler\PipelineBundler;
+use Hostnet\Component\Resolver\File;
+use Hostnet\Component\Resolver\FileSystem\FileReader;
+use Hostnet\Component\Resolver\FileSystem\WriterInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
@@ -28,9 +32,26 @@ class FunctionalTest extends KernelTestCase
     public function testGetPipeline()
     {
         $container = self::$kernel->getContainer();
-        self::assertInstanceOf(
-            PipelineBundler::class,
-            $container->get('hostnet_asset.bundler')
+
+        $pipeline = $container->get('hostnet_asset.bundler');
+        self::assertInstanceOf(PipelineBundler::class, $pipeline);
+
+        /* @var PipelineBundler $pipeline */
+        $reader = new FileReader(__DIR__ . '/../../');
+
+        $writer = new class implements WriterInterface {
+            public $files = [];
+
+            public function write(File $file, string $content): void
+            {
+                $this->files[$file->path] = $content;
+            }
+        };
+        $pipeline->execute($reader, $writer);
+
+        self::assertEquals(
+            ['web/dev/require.js', 'web/dev/foo.bundle.js', 'web/dev/foo.vendor.js'],
+            array_keys($writer->files)
         );
     }
 }
