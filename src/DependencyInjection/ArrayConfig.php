@@ -19,6 +19,7 @@ final class ArrayConfig implements ConfigInterface
     private $include_paths;
     private $entry_points;
     private $asset_files;
+    private $web_root;
     private $output_folder;
     private $source_root;
     private $cache_dir;
@@ -33,6 +34,7 @@ final class ArrayConfig implements ConfigInterface
         array $include_paths,
         array $entry_points,
         array $asset_files,
+        string $web_root,
         string $output_folder,
         string $source_root,
         string $cache_dir,
@@ -46,6 +48,7 @@ final class ArrayConfig implements ConfigInterface
         $this->include_paths = $include_paths;
         $this->entry_points  = $entry_points;
         $this->asset_files   = $asset_files;
+        $this->web_root      = $web_root;
         $this->output_folder = $output_folder;
         $this->source_root   = $source_root;
         $this->cache_dir     = $cache_dir;
@@ -99,9 +102,13 @@ final class ArrayConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getOutputFolder(): string
+    public function getOutputFolder(bool $include_public_folder = true): string
     {
-        return $this->output_folder;
+        if (! $include_public_folder) {
+            return $this->output_folder;
+        }
+
+        return $this->web_root . DIRECTORY_SEPARATOR . $this->output_folder;
     }
 
     /**
