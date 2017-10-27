@@ -7,7 +7,16 @@ framework:
     secret: test
 
 hostnet_asset:
+    files:
+        - foo.js
     plugins:
+        Hostnet\Component\Resolver\Plugin\CorePlugin: true
+        Hostnet\Component\Resolver\Plugin\MinifyPlugin: true
         Hostnet\Component\Resolver\Plugin\LessPlugin: true
         Hostnet\Component\Resolver\Plugin\TsPlugin: true
         Hostnet\Component\Resolver\Plugin\AngularPlugin: true
+    source_root: test/Functional/Fixtures/resources/assets/
+    output_folder: var/web
+    bin:
+        node: "echo"
+        node_modules: "%kernel.project_dir%/node_modules"
