@@ -10,7 +10,7 @@ use Hostnet\Bundle\AssetBundle\EventListener\AssetsChangeListener;
 use Hostnet\Bundle\AssetBundle\Twig\AssetExtension;
 use Hostnet\Component\Resolver\Bundler\Pipeline\ContentPipeline;
 use Hostnet\Component\Resolver\Bundler\PipelineBundler;
-use Hostnet\Component\Resolver\Bundler\Runner\UglifyJsRunner;
+use Hostnet\Component\Resolver\Bundler\Runner\RunnerInterface;
 use Hostnet\Component\Resolver\Cache\Cache;
 use Hostnet\Component\Resolver\FileSystem\FileWriter;
 use Hostnet\Component\Resolver\Import\ImportFinder;
@@ -76,6 +76,7 @@ final class HostnetAssetExtension extends Extension
             $container->getParameter('kernel.debug') ? $config['output_folder_dev'] : $config['output_folder'],
             $config['source_root'],
             $cache_dir,
+            $config['enable_unix_socket'],
             $plugins,
             new Reference('hostnet_asset.node.executable'),
             new Reference('event_dispatcher'),
@@ -85,9 +86,11 @@ final class HostnetAssetExtension extends Extension
 
         $container->setDefinition('hostnet_asset.config', $bundler_config);
 
-        $uglify = new Definition(UglifyJsRunner::class, [new Reference('hostnet_asset.node.executable')]);
-        $uglify->setPublic(false);
-        $container->setDefinition('hostnet_asset.runner.uglify_js', $uglify);
+        $runner = (new Definition(RunnerInterface::class))
+            ->setFactory([new Reference('hostnet_asset.config'), 'getRunner'])
+            ->setPublic(false);
+
+        $container->setDefinition('hostnet_asset.runner', $runner);
 
         // Register the main services.
         $import_finder = (new Definition(ImportFinder::class, [$container->getParameter('kernel.project_dir')]))
@@ -123,7 +126,7 @@ final class HostnetAssetExtension extends Extension
             new Reference('hostnet_asset.pipline'),
             new Reference('logger'),
             new Reference('hostnet_asset.config'),
-            new Reference('hostnet_asset.runner.uglify_js'),
+            new Reference('hostnet_asset.runner'),
         ]))
             ->setConfigurator([new Reference('hostnet_asset.plugin.activator'), 'ensurePluginsAreActivated'])
             ->setPublic(true);

@@ -5,6 +5,9 @@ declare(strict_types=1);
  */
 namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 
+use Hostnet\Component\Resolver\Bundler\Runner\RunnerInterface;
+use Hostnet\Component\Resolver\Bundler\Runner\SingleProcessRunner;
+use Hostnet\Component\Resolver\Bundler\Runner\UnixSocketRunner;
 use Hostnet\Component\Resolver\Config\ConfigInterface;
 use Hostnet\Component\Resolver\Import\Nodejs\Executable;
 use Psr\Log\LoggerInterface;
@@ -24,6 +27,7 @@ final class ArrayConfig implements ConfigInterface
     private $source_root;
     private $cache_dir;
     private $plugins;
+    private $enable_unix_socket;
     private $node_js_executable;
     private $logger;
     private $event_dispatcher;
@@ -38,6 +42,7 @@ final class ArrayConfig implements ConfigInterface
         string $output_folder,
         string $source_root,
         string $cache_dir,
+        bool $enable_unix_socket,
         array $plugins,
         Executable $node_js_executable,
         EventDispatcherInterface $event_dispatcher = null,
@@ -54,6 +59,7 @@ final class ArrayConfig implements ConfigInterface
         $this->cache_dir     = $cache_dir;
         $this->plugins       = $plugins;
 
+        $this->enable_unix_socket = $enable_unix_socket;
         $this->node_js_executable = $node_js_executable;
         $this->event_dispatcher   = $event_dispatcher ?? new EventDispatcher();
         $this->logger             = $logger ?? new NullLogger();
@@ -157,5 +163,15 @@ final class ArrayConfig implements ConfigInterface
     public function getEventDispatcher(): EventDispatcherInterface
     {
         return $this->event_dispatcher;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRunner(): RunnerInterface
+    {
+        return $this->enable_unix_socket
+            ? new UnixSocketRunner($this)
+            : new SingleProcessRunner($this);
     }
 }
