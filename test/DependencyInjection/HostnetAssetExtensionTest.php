@@ -8,16 +8,10 @@ namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 use Hostnet\Bundle\AssetBundle\Command\CompileCommand;
 use Hostnet\Bundle\AssetBundle\EventListener\AssetsChangeListener;
 use Hostnet\Bundle\AssetBundle\Twig\AssetExtension;
-use Hostnet\Component\Resolver\Bundler\ContentState;
 use Hostnet\Component\Resolver\Bundler\Pipeline\ContentPipeline;
 use Hostnet\Component\Resolver\Bundler\PipelineBundler;
-use Hostnet\Component\Resolver\Bundler\Processor\IdentityProcessor;
-use Hostnet\Component\Resolver\Bundler\Processor\JsonProcessor;
-use Hostnet\Component\Resolver\Bundler\Processor\ModuleProcessor;
-use Hostnet\Component\Resolver\Import\BuiltIn\JsImportCollector;
 use Hostnet\Component\Resolver\Import\ImportFinder;
 use Hostnet\Component\Resolver\Import\Nodejs\Executable;
-use Hostnet\Component\Resolver\Import\Nodejs\FileResolver;
 use Hostnet\Component\Resolver\Plugin\AngularPlugin;
 use Hostnet\Component\Resolver\Plugin\LessPlugin;
 use Hostnet\Component\Resolver\Plugin\TsPlugin;
@@ -59,7 +53,7 @@ class HostnetAssetExtensionTest extends TestCase
             'service_container',
             'hostnet_asset.node.executable',
             'hostnet_asset.config',
-            'hostnet_asset.runner.uglify_js',
+            'hostnet_asset.runner',
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
@@ -89,7 +83,7 @@ class HostnetAssetExtensionTest extends TestCase
             'service_container',
             'hostnet_asset.node.executable',
             'hostnet_asset.config',
-            'hostnet_asset.runner.uglify_js',
+            'hostnet_asset.runner',
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
@@ -123,7 +117,7 @@ class HostnetAssetExtensionTest extends TestCase
             'service_container',
             'hostnet_asset.node.executable',
             'hostnet_asset.config',
-            'hostnet_asset.runner.uglify_js',
+            'hostnet_asset.runner',
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
@@ -158,7 +152,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.node.executable',
             TsPlugin::class,
             'hostnet_asset.config',
-            'hostnet_asset.runner.uglify_js',
+            'hostnet_asset.runner',
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
@@ -194,7 +188,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.node.executable',
             LessPlugin::class,
             'hostnet_asset.config',
-            'hostnet_asset.runner.uglify_js',
+            'hostnet_asset.runner',
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
@@ -230,7 +224,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.node.executable',
             AngularPlugin::class,
             'hostnet_asset.config',
-            'hostnet_asset.runner.uglify_js',
+            'hostnet_asset.runner',
             'hostnet_asset.import_finder',
             'hostnet_asset.file_writer',
             'hostnet_asset.pipline',
@@ -261,7 +255,7 @@ class HostnetAssetExtensionTest extends TestCase
         foreach ($plugins as $plugin) {
             $plugin_references[] = new Reference($plugin);
         }
-        self::assertEquals($plugin_references, $definition->getArgument(9));
+        self::assertEquals($plugin_references, $definition->getArgument(10));
     }
 
     private function validateBaseServiceDefinitions(ContainerBuilder $container)
@@ -289,7 +283,7 @@ class HostnetAssetExtensionTest extends TestCase
                 new Reference('hostnet_asset.pipline'),
                 new Reference('logger'),
                 new Reference('hostnet_asset.config'),
-                new Reference('hostnet_asset.runner.uglify_js'),
+                new Reference('hostnet_asset.runner'),
             ]))
                 ->setPublic(true)
                 ->setConfigurator([new Reference('hostnet_asset.plugin.activator'), 'ensurePluginsAreActivated']),
