@@ -7,6 +7,7 @@ namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 
 use Hostnet\Component\Resolver\Bundler\Runner\RunnerInterface;
 use Hostnet\Component\Resolver\Bundler\Runner\SingleProcessRunner;
+use Hostnet\Component\Resolver\Bundler\Runner\UnixSocketFactory;
 use Hostnet\Component\Resolver\Bundler\Runner\UnixSocketRunner;
 use Hostnet\Component\Resolver\Config\ConfigInterface;
 use Hostnet\Component\Resolver\Import\Nodejs\Executable;
@@ -171,7 +172,7 @@ final class ArrayConfig implements ConfigInterface
     public function getRunner(): RunnerInterface
     {
         return $this->enable_unix_socket
-            ? new UnixSocketRunner($this)
+            ? new UnixSocketRunner($this, new UnixSocketFactory())
             : new SingleProcessRunner($this);
     }
 }
