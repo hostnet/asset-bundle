@@ -12,7 +12,7 @@ use Hostnet\Component\Resolver\FileSystem\WriterInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @covers \Hostnet\Bundle\AssetBundle\Command\CompileCommand
@@ -42,10 +42,15 @@ class CompileCommandTest extends TestCase
     {
         $this->config->getProjectRoot()->willReturn(__DIR__);
 
+        $output = $this->prophesize(OutputInterface::class);
+
         $this->bundler
             ->execute(Argument::type(ReaderInterface::class), Argument::type(WriterInterface::class))
-            ->shouldBeCalled();
+            ->shouldBeCalled()
+            ->will(function () use ($output) {
+                $output->writeln(CompileCommand::EXIT_MESSAGE)->shouldBeCalled();
+            });
 
-        $this->compile_command->run(new ArrayInput([]), new NullOutput());
+        $this->compile_command->run(new ArrayInput([]), $output->reveal());
     }
 }

@@ -15,6 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class CompileCommand extends Command
 {
+    public const EXIT_MESSAGE = 'Compile command complete';
+
     /**
      * @var PipelineBundler
      */
@@ -42,5 +44,10 @@ final class CompileCommand extends Command
         $writer = new FileWriter($this->config->getProjectRoot());
 
         $this->bundler->execute($reader, $writer);
+
+        // Write this exit message to denote that we are done
+        // Is used in a functional way to prevent defunct processes
+        // https://github.com/symfony/symfony/issues/12097#issuecomment-343145050
+        $output->writeln(self::EXIT_MESSAGE);
     }
 }
