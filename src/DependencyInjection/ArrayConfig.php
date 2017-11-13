@@ -172,7 +172,7 @@ final class ArrayConfig implements ConfigInterface
     public function getRunner(): RunnerInterface
     {
         return $this->enable_unix_socket
-            ? new UnixSocketRunner($this, new UnixSocketFactory())
+            ? new UnixSocketRunner($this, new UnixSocketFactory($this->getLogger()))
             : new SingleProcessRunner($this);
     }
 }
