@@ -10,7 +10,6 @@ use Hostnet\Component\Resolver\Plugin\PluginInterface;
 
 class MockPlugin implements PluginInterface
 {
-
     public function activate(PluginApi $plugin_api): void
     {
     }
