@@ -355,4 +355,60 @@ class HostnetAssetExtensionTest extends TestCase
 
         self::assertInstanceOf(PipelineBundler::class, $container->get('hostnet_asset.bundler'));
     }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedExceptionMessage Unknown plugin stdClass.
+     */
+    public function testBuildNonPlugin()
+    {
+        $container = new ContainerBuilder();
+
+        $container->setParameter('kernel.debug', true);
+        $container->setParameter('kernel.project_dir', __DIR__);
+        $container->setParameter('kernel.cache_dir', __DIR__);
+        $container->setParameter('kernel.root_dir', __DIR__);
+
+        $container->setDefinition('event_dispatcher', new Definition(EventDispatcher::class));
+        $container->setDefinition('logger', new Definition(NullLogger::class));
+
+        $this->hostnet_asset_extension->load([[
+            'bin' => ['node' => '/usr/bin/node'],
+            'plugins' => [
+                \stdClass::class => true
+            ]
+        ]], $container);
+
+        $container->compile();
+
+        self::assertInstanceOf(PipelineBundler::class, $container->get('hostnet_asset.bundler'));
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedExceptionMessage Unknown plugin Hostnet\Bundle\AssetBundle\DependencyInjection\MockPlugin.
+     */
+    public function testBuildNonBuiltin()
+    {
+        $container = new ContainerBuilder();
+
+        $container->setParameter('kernel.debug', true);
+        $container->setParameter('kernel.project_dir', __DIR__);
+        $container->setParameter('kernel.cache_dir', __DIR__);
+        $container->setParameter('kernel.root_dir', __DIR__);
+
+        $container->setDefinition('event_dispatcher', new Definition(EventDispatcher::class));
+        $container->setDefinition('logger', new Definition(NullLogger::class));
+
+        $this->hostnet_asset_extension->load([[
+            'bin' => ['node' => '/usr/bin/node'],
+            'plugins' => [
+                MockPlugin::class => true
+            ]
+        ]], $container);
+
+        $container->compile();
+
+        self::assertInstanceOf(PipelineBundler::class, $container->get('hostnet_asset.bundler'));
+    }
 }
