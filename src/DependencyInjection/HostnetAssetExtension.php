@@ -21,6 +21,7 @@ use Hostnet\Component\Resolver\Plugin\LessPlugin;
 use Hostnet\Component\Resolver\Plugin\MinifyPlugin;
 use Hostnet\Component\Resolver\Plugin\PluginActivator;
 use Hostnet\Component\Resolver\Plugin\PluginApi;
+use Hostnet\Component\Resolver\Plugin\PluginInterface;
 use Hostnet\Component\Resolver\Plugin\TsPlugin;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -47,18 +48,18 @@ final class HostnetAssetExtension extends Extension
 
         $container->setDefinition('hostnet_asset.node.executable', $node_executable);
 
-        $plugins  = [];
-        $built_in = [CorePlugin::class, TsPlugin::class, LessPlugin::class, AngularPlugin::class, MinifyPlugin::class];
+        $plugins = [];
         foreach ($config['plugins'] as $name => $is_enabled) {
             if (! $is_enabled) {
                 continue;
             }
 
-            if (! in_array($name, $built_in)) {
-                // Note: no code written yet to allow custom plugins
-                // So long as someone implements the PluginInterface
-                // Just add it to the $plugins array & go :)
-                throw new InvalidConfigurationException(sprintf('Unknown plugin %s.', $name));
+            if (! is_subclass_of($name, PluginInterface::class)) {
+                throw new InvalidConfigurationException(sprintf(
+                    'Class %s should implement %s.',
+                    $name,
+                    PluginInterface::class
+                ));
             }
 
             $plugins[] = $this->configurePlugin($name, $container);

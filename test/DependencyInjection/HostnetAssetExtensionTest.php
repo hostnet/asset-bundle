@@ -358,7 +358,7 @@ class HostnetAssetExtensionTest extends TestCase
 
     /**
      * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Unknown plugin stdClass.
+     * @expectedExceptionMessage Class stdClass should implement Hostnet\Component\Resolver\Plugin\PluginInterface.
      */
     public function testBuildNonPlugin()
     {
@@ -382,10 +382,6 @@ class HostnetAssetExtensionTest extends TestCase
         $container->compile();
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Unknown plugin Hostnet\Bundle\AssetBundle\DependencyInjection\MockPlugin.
-     */
     public function testBuildNonBuiltin()
     {
         $container = new ContainerBuilder();
@@ -405,6 +401,14 @@ class HostnetAssetExtensionTest extends TestCase
             ]
         ]], $container);
 
+        // make the config public
+        $container->getDefinition('hostnet_asset.config')->setPublic(true);
+
         $container->compile();
+
+        $plugins = $container->get('hostnet_asset.config')->getPlugins();
+
+        self::assertCount(1, $plugins);
+        self::assertInstanceOf(MockPlugin::class, $plugins[0]);
     }
 }
