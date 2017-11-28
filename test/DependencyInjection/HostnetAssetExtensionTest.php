@@ -380,8 +380,6 @@ class HostnetAssetExtensionTest extends TestCase
         ]], $container);
 
         $container->compile();
-
-        self::assertInstanceOf(PipelineBundler::class, $container->get('hostnet_asset.bundler'));
     }
 
     /**
@@ -408,7 +406,5 @@ class HostnetAssetExtensionTest extends TestCase
         ]], $container);
 
         $container->compile();
-
-        self::assertInstanceOf(PipelineBundler::class, $container->get('hostnet_asset.bundler'));
     }
 }
