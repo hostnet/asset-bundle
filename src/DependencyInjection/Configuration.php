@@ -5,6 +5,7 @@
 declare(strict_types=1);
 namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 
+use Hostnet\Component\Resolver\Config\UnixSocketType;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Process\ExecutableFinder;
@@ -65,8 +66,9 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
-                ->booleanNode('enable_unix_socket')
-                    ->defaultFalse()
+                ->enumNode('enable_unix_socket')
+                    ->values([UnixSocketType::DISABLED, UnixSocketType::PRE_PROCESS, UnixSocketType::ALWAYS])
+                    ->defaultValue(UnixSocketType::DISABLED)
                 ->end()
                 ->arrayNode('plugins')
                     ->info('Configured plugins.')
