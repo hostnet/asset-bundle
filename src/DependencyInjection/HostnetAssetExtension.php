@@ -12,6 +12,7 @@ use Hostnet\Component\Resolver\Bundler\Pipeline\ContentPipeline;
 use Hostnet\Component\Resolver\Bundler\PipelineBundler;
 use Hostnet\Component\Resolver\Bundler\Runner\RunnerInterface;
 use Hostnet\Component\Resolver\Cache\Cache;
+use Hostnet\Component\Resolver\Config\SimpleConfig;
 use Hostnet\Component\Resolver\FileSystem\FileWriter;
 use Hostnet\Component\Resolver\Import\ImportFinder;
 use Hostnet\Component\Resolver\Import\Nodejs\Executable;
@@ -67,7 +68,7 @@ final class HostnetAssetExtension extends Extension
 
         $cache_dir = $container->getParameter('kernel.cache_dir') . '/assets';
         // Create config
-        $bundler_config = (new Definition(ArrayConfig::class, [
+        $bundler_config = (new Definition(SimpleConfig::class, [
             $container->getParameter('kernel.debug'),
             $container->getParameter('kernel.project_dir'),
             $config['include_paths'],
