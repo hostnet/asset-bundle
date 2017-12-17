@@ -40,8 +40,8 @@ class DebugCommandTest extends TestCase
 
     public function testExecute()
     {
-        $this->config->getProjectRoot()->willReturn(__DIR__);
-        $this->config->getSourceRoot()->willReturn('src');
+        $this->config->getProjectRoot()->willReturn(dirname(__DIR__));
+        $this->config->getSourceRoot()->willReturn(basename(__DIR__));
         $this->config->getEntryPoints()->willReturn([basename(__FILE__)]);
         $this->config->getAssetFiles()->willReturn([]);
 
@@ -54,14 +54,14 @@ class DebugCommandTest extends TestCase
 
     public function testExecuteWithEntryPoint()
     {
-        $this->config->getProjectRoot()->willReturn(__DIR__);
-        $this->config->getSourceRoot()->willReturn('');
+        $this->config->getProjectRoot()->willReturn(dirname(__DIR__));
+        $this->config->getSourceRoot()->willReturn(basename(__DIR__));
         $this->config->getEntryPoints()->willReturn([basename(__FILE__)]);
         $this->config->getAssetFiles()->willReturn([]);
         $this->config->getOutputFolder()->willReturn('dev');
 
-        $file = new File(basename(__FILE__));
-        $dep = new File('expected.output.txt');
+        $file = new File(basename(__DIR__) . '/' . basename(__FILE__));
+        $dep = new File(basename(__DIR__) . '/expected.output.txt');
         $root = new RootFile($file);
         $root->addChild(new Dependency($dep));
 
@@ -70,21 +70,21 @@ class DebugCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $this->compile_command->run(new ArrayInput(['file' => basename(__FILE__)]), $output);
+        $this->compile_command->run(new ArrayInput(['file' => basename(__DIR__) . '/' . basename(__FILE__)]), $output);
 
         self::assertStringEqualsFile(__DIR__ . '/expected-entry_point.output.txt', $output->fetch());
     }
 
     public function testExecuteWithAsset()
     {
-        $this->config->getProjectRoot()->willReturn(__DIR__);
-        $this->config->getSourceRoot()->willReturn('');
+        $this->config->getProjectRoot()->willReturn(dirname(__DIR__));
+        $this->config->getSourceRoot()->willReturn(basename(__DIR__));
         $this->config->getEntryPoints()->willReturn([]);
         $this->config->getAssetFiles()->willReturn([basename(__FILE__)]);
         $this->config->getOutputFolder()->willReturn('dev');
 
-        $file = new File(basename(__FILE__));
-        $dep = new File('expected.output.txt');
+        $file = new File(basename(__DIR__) . '/' . basename(__FILE__));
+        $dep = new File(basename(__DIR__) . '/expected.output.txt');
         $root = new RootFile($file);
         $root->addChild(new Dependency($dep));
 
@@ -93,7 +93,7 @@ class DebugCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $this->compile_command->run(new ArrayInput(['file' => basename(__FILE__)]), $output);
+        $this->compile_command->run(new ArrayInput(['file' => basename(__DIR__) . '/' . basename(__FILE__)]), $output);
 
         self::assertStringEqualsFile(__DIR__ . '/expected-asset.output.txt', $output->fetch());
     }

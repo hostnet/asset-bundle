@@ -1,11 +1,11 @@
 File info:
-  - Root: DebugCommandTest.php
+  - Root: Command/DebugCommandTest.php
   - Type: Asset
-  - Size: 3.38K
+  - Size: 3.59K
 
 Bundled files:
-  - DebugCommandTest.php
-  - expected.output.txt
+  - Command/DebugCommandTest.php
+  - Command/expected.output.txt
 
 Dependency tree:
-  - expected.output.txt
+  - Command/expected.output.txt

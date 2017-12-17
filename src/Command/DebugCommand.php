@@ -125,7 +125,7 @@ class DebugCommand extends Command
 
     private function filesize(string $file)
     {
-        $bytes = filesize($file);
+        $bytes = filesize($this->config->getProjectRoot() . DIRECTORY_SEPARATOR . $file);
         $sizes = 'BKMGTP';
         $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
 

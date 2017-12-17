@@ -1,5 +1,5 @@
 Entry points:
-  - src/DebugCommandTest.php
+  - Command/DebugCommandTest.php
 
 Asset files:
   - None
