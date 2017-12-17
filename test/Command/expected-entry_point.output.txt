@@ -1,7 +1,7 @@
 File info:
   - Root: Command/DebugCommandTest.php
   - Type: Entry Point
-  - Size: 3.59K
+  - Size: {{SIZE}}
 
 Bundle bundled files: (dev/DebugCommandTest.bundle.js)
   - Command/DebugCommandTest.php

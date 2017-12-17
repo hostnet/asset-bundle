@@ -72,7 +72,11 @@ class DebugCommandTest extends TestCase
 
         $this->compile_command->run(new ArrayInput(['file' => basename(__DIR__) . '/' . basename(__FILE__)]), $output);
 
-        self::assertStringEqualsFile(__DIR__ . '/expected-entry_point.output.txt', $output->fetch());
+        self::assertSame(str_replace(
+            '{{SIZE}}',
+            $this->filesize(__FILE__),
+            file_get_contents(__DIR__ . '/expected-entry_point.output.txt')
+        ), $output->fetch());
     }
 
     public function testExecuteWithAsset()
@@ -95,6 +99,19 @@ class DebugCommandTest extends TestCase
 
         $this->compile_command->run(new ArrayInput(['file' => basename(__DIR__) . '/' . basename(__FILE__)]), $output);
 
-        self::assertStringEqualsFile(__DIR__ . '/expected-asset.output.txt', $output->fetch());
+        self::assertSame(str_replace(
+            '{{SIZE}}',
+            $this->filesize(__FILE__),
+            file_get_contents(__DIR__ . '/expected-asset.output.txt')
+        ), $output->fetch());
+    }
+
+    private function filesize(string $file)
+    {
+        $bytes = filesize($file);
+        $sizes = 'BKMGTP';
+        $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
+
+        return sprintf('%.2f', $bytes / (1024 ** $factor)) . @$sizes[$factor];
     }
 }

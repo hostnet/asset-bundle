@@ -1,7 +1,7 @@
 File info:
   - Root: Command/DebugCommandTest.php
   - Type: Asset
-  - Size: 3.59K
+  - Size: {{SIZE}}
 
 Bundled files:
   - Command/DebugCommandTest.php
