@@ -1,0 +1,13 @@
+File info:
+  - Root: DebugCommandTest.php
+  - Type: Entry Point
+  - Size: 3.38K
+
+Bundle bundled files: (dev/DebugCommandTest.bundle.js)
+  - DebugCommandTest.php
+  - expected.output.txt
+Vendor bundled files: (dev/DebugCommandTest.vendor.js)
+  - None
+
+Dependency tree:
+  - expected.output.txt

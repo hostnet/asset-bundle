@@ -6,6 +6,7 @@ declare(strict_types = 1);
 namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 
 use Hostnet\Bundle\AssetBundle\Command\CompileCommand;
+use Hostnet\Bundle\AssetBundle\Command\DebugCommand;
 use Hostnet\Bundle\AssetBundle\EventListener\AssetsChangeListener;
 use Hostnet\Bundle\AssetBundle\Twig\AssetExtension;
 use Hostnet\Component\Resolver\Bundler\Pipeline\ContentPipeline;
@@ -168,6 +169,17 @@ final class HostnetAssetExtension extends Extension
             ->setPublic(false);
 
         $container->setDefinition('hostnet_asset.command.compile', $compile);
+
+        if ($container->getParameter('kernel.debug')) {
+            $debug = (new Definition(DebugCommand::class, [
+                new Reference('hostnet_asset.config'),
+                new Reference('hostnet_asset.import_finder'),
+            ]))
+                ->addTag('console.command')
+                ->setPublic(false);
+
+            $container->setDefinition('hostnet_asset.command.debug', $debug);
+        }
     }
 
     private function configureEventListeners(ContainerBuilder $container)
