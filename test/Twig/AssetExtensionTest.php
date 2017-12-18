@@ -37,7 +37,12 @@ class AssetExtensionTest extends TestCase
     public function testAssetUrl()
     {
         $this->config->getOutputFolder(false)->willReturn('phpunit');
+        $this->config->getOutputFolder()->willReturn(basename(__DIR__));
+        $this->config->getProjectRoot()->willReturn(dirname(__DIR__));
 
-        self::assertEquals('/phpunit/foobar', $this->asset_extension->assetUrl('foobar'));
+        self::assertRegExp(
+            '~^/phpunit/AssetExtensionTest\.php\?[0-9]+$~',
+            $this->asset_extension->assetUrl(basename(__FILE__))
+        );
     }
 }
