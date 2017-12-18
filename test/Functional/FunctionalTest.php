@@ -50,7 +50,11 @@ class FunctionalTest extends KernelTestCase
         $pipeline->execute($reader, $writer);
 
         self::assertEquals(
-            ['web/dev/require.js', 'web/dev/foo.bundle.js', 'web/dev/foo.vendor.js'],
+            [
+                'web' . DIRECTORY_SEPARATOR . 'dev/require.js',
+                'web' . DIRECTORY_SEPARATOR . 'dev/foo.bundle.js',
+                'web' . DIRECTORY_SEPARATOR . 'dev/foo.vendor.js'
+            ],
             array_keys($writer->files)
         );
     }

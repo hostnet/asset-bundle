@@ -1,0 +1,11 @@
+File info:
+  - Root: Command/DebugCommandTest.php
+  - Type: Asset
+  - Size: {{SIZE}}
+
+Bundled files:
+  - Command/DebugCommandTest.php
+  - Command/expected.output.txt
+
+Dependency tree:
+  - Command/expected.output.txt

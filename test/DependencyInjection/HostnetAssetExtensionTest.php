@@ -63,6 +63,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
+            'hostnet_asset.command.debug',
             'hostnet_asset.twig.extension',
         ], array_keys($container->getDefinitions()));
     }
@@ -93,6 +94,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
+            'hostnet_asset.command.debug',
             'hostnet_asset.twig.extension',
         ], array_keys($container->getDefinitions()));
 
@@ -162,6 +164,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
+            'hostnet_asset.command.debug',
             'hostnet_asset.twig.extension',
         ], array_keys($container->getDefinitions()));
 
@@ -198,6 +201,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
+            'hostnet_asset.command.debug',
             'hostnet_asset.twig.extension',
         ], array_keys($container->getDefinitions()));
 
@@ -234,6 +238,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
+            'hostnet_asset.command.debug',
             'hostnet_asset.twig.extension',
         ], array_keys($container->getDefinitions()));
 
