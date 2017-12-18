@@ -111,15 +111,15 @@ class DebugCommand extends Command
         $this->printDependencyTree($output, $file_obj);
     }
 
-    private function printDependencyTree(OutputInterface $output, File $file, int $dept = 0)
+    private function printDependencyTree(OutputInterface $output, File $file, int $depth = 0)
     {
         $deps = $this->finder->all($file);
 
         foreach ($deps->getChildren() as $child) {
             $child_file = $child->getFile();
-            $output->writeln(str_repeat('  ', $dept) . '  - ' . $child_file->getName());
+            $output->writeln(str_repeat('  ', $depth) . '  - ' . $child_file->getName());
 
-            $this->printDependencyTree($output, $child_file, $dept + 1);
+            $this->printDependencyTree($output, $child_file, $depth + 1);
         }
     }
 
