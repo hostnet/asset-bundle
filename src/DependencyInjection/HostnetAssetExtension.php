@@ -98,7 +98,10 @@ final class HostnetAssetExtension extends Extension
         // Register the main services.
         $import_finder = (new Definition(ImportFinder::class, [$container->getParameter('kernel.project_dir')]))
             ->setPublic(false);
-        $writer        = (new Definition(FileWriter::class, [$container->getParameter('kernel.project_dir')]))
+        $writer        = (new Definition(FileWriter::class, [
+            new Reference('event_dispatcher'),
+            $container->getParameter('kernel.project_dir')
+        ]))
             ->setPublic(false);
 
         $pipeline = (new Definition(ContentPipeline::class, [
