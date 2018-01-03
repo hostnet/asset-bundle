@@ -11,6 +11,7 @@ use Hostnet\Component\Resolver\FileSystem\ReaderInterface;
 use Hostnet\Component\Resolver\FileSystem\WriterInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -43,6 +44,7 @@ class AssetsChangeListenerTest extends TestCase
     public function testOnKernelResponse()
     {
         $this->config->getProjectRoot()->willReturn(__DIR__);
+        $this->config->getEventDispatcher()->willReturn(new EventDispatcher());
 
         $this->bundler
             ->execute(Argument::type(ReaderInterface::class), Argument::type(WriterInterface::class))

@@ -41,7 +41,7 @@ final class CompileCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $reader = new FileReader($this->config->getProjectRoot());
-        $writer = new FileWriter($this->config->getProjectRoot());
+        $writer = new FileWriter($this->config->getEventDispatcher(), $this->config->getProjectRoot());
 
         $this->bundler->execute($reader, $writer);
 

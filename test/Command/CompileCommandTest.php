@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * @covers \Hostnet\Bundle\AssetBundle\Command\CompileCommand
@@ -41,6 +42,7 @@ class CompileCommandTest extends TestCase
     public function testExecute()
     {
         $this->config->getProjectRoot()->willReturn(__DIR__);
+        $this->config->getEventDispatcher()->willReturn(new EventDispatcher());
 
         $output = $this->prophesize(OutputInterface::class);
 
