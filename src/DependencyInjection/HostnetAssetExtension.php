@@ -21,6 +21,7 @@ use Hostnet\Component\Resolver\Plugin\PluginActivator;
 use Hostnet\Component\Resolver\Plugin\PluginApi;
 use Hostnet\Component\Resolver\Plugin\PluginInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Debug\BufferingLogger;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
@@ -79,7 +80,7 @@ final class HostnetAssetExtension extends Extension
             $plugins,
             new Reference('hostnet_asset.node.executable'),
             new Reference('event_dispatcher'),
-            new Reference('logger')
+            new Reference('hostnet_asset.logger')
         ]))
             ->setPublic(false);
 
@@ -102,7 +103,7 @@ final class HostnetAssetExtension extends Extension
 
         $pipeline = (new Definition(ContentPipeline::class, [
             new Reference('event_dispatcher'),
-            new Reference('logger'),
+            new Reference('hostnet_asset.logger'),
             new Reference('hostnet_asset.config'),
             new Reference('hostnet_asset.file_writer'),
         ]))
@@ -126,7 +127,7 @@ final class HostnetAssetExtension extends Extension
         $bundler = (new Definition(PipelineBundler::class, [
             new Reference('hostnet_asset.import_finder'),
             new Reference('hostnet_asset.pipline'),
-            new Reference('logger'),
+            new Reference('hostnet_asset.logger'),
             new Reference('hostnet_asset.config'),
             new Reference('hostnet_asset.runner'),
         ]))
@@ -140,6 +141,7 @@ final class HostnetAssetExtension extends Extension
         $container->setDefinition('hostnet_asset.plugin.api', $plugin_api);
         $container->setDefinition('hostnet_asset.plugin.activator', $plugin_activator);
         $container->setDefinition('hostnet_asset.bundler', $bundler);
+        $container->setDefinition('hostnet_asset.logger', new Definition(BufferingLogger::class));
 
         // Register event listeners
         $this->configureEventListeners($container);
@@ -163,6 +165,7 @@ final class HostnetAssetExtension extends Extension
         $compile = (new Definition(CompileCommand::class, [
             new Reference('hostnet_asset.bundler'),
             new Reference('hostnet_asset.config'),
+            new Reference('hostnet_asset.logger'),
         ]))
             ->addTag('console.command')
             ->setPublic(false);
