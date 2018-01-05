@@ -3,14 +3,13 @@ declare(strict_types=1);
 /**
  * @copyright 2017 Hostnet B.V.
  */
-
 namespace Hostnet\Bundle\AssetBundle\EventListener;
 
 use Hostnet\Component\Resolver\Bundler\PipelineBundler;
 use Hostnet\Component\Resolver\Config\ConfigInterface;
 use Hostnet\Component\Resolver\FileSystem\FileReader;
 use Hostnet\Component\Resolver\FileSystem\FileWriter;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 final class AssetsChangeListener
@@ -31,7 +30,7 @@ final class AssetsChangeListener
         $this->config  = $config;
     }
 
-    public function onKernelResponse(FilterResponseEvent $e)
+    public function onKernelRequest(GetResponseEvent $e): void
     {
         // Only trigger on the master request.
         if ($e->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
