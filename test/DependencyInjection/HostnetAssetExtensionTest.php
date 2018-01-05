@@ -253,14 +253,14 @@ class HostnetAssetExtensionTest extends TestCase
 
         self::assertSame($is_dev, $definition->getArgument(0));
         self::assertSame(__DIR__, $definition->getArgument(1));
-        self::assertSame('web', $definition->getArgument(5));
-        self::assertSame($output_folder, $definition->getArgument(6));
+        self::assertSame('web', $definition->getArgument(6));
+        self::assertSame($output_folder, $definition->getArgument(7));
 
         $plugin_references = [];
         foreach ($plugins as $plugin) {
             $plugin_references[] = new Reference($plugin);
         }
-        self::assertEquals($plugin_references, $definition->getArgument(10));
+        self::assertEquals($plugin_references, $definition->getArgument(11));
     }
 
     private function validateBaseServiceDefinitions(ContainerBuilder $container)

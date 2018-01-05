@@ -75,6 +75,7 @@ final class HostnetAssetExtension extends Extension
             $config['include_paths'],
             $config['files'],
             $config['assets'],
+            $config['excluded_files'],
             $config['web_root'],
             $container->getParameter('kernel.debug') ? $config['output_folder_dev'] : $config['output_folder'],
             $config['source_root'],
