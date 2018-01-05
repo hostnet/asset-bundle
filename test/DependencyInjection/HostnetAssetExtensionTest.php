@@ -328,8 +328,8 @@ class HostnetAssetExtensionTest extends TestCase
             ]))
                 ->setPublic(false)
                 ->addTag('kernel.event_listener', [
-                    'event' => KernelEvents::RESPONSE,
-                    'method' => 'onKernelResponse'
+                    'event' => KernelEvents::REQUEST,
+                    'method' => 'onKernelRequest'
                 ]),
             $container->getDefinition('hostnet_asset.listener.assets_change')
         );

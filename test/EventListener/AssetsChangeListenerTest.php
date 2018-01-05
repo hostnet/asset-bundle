@@ -13,8 +13,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
@@ -41,7 +40,7 @@ class AssetsChangeListenerTest extends TestCase
         );
     }
 
-    public function testOnKernelResponse()
+    public function testOnKernelRequest()
     {
         $this->config->getProjectRoot()->willReturn(__DIR__);
         $this->config->getEventDispatcher()->willReturn(new EventDispatcher());
@@ -53,9 +52,9 @@ class AssetsChangeListenerTest extends TestCase
         $kernel  = $this->prophesize(HttpKernelInterface::class);
         $request = new Request();
 
-        $e = new FilterResponseEvent($kernel->reveal(), $request, HttpKernelInterface::MASTER_REQUEST, new Response());
+        $e = new GetResponseEvent($kernel->reveal(), $request, HttpKernelInterface::MASTER_REQUEST);
 
-        $this->assets_change_listener->onKernelResponse($e);
+        $this->assets_change_listener->onKernelRequest($e);
     }
 
     public function testOnKernelResponseSubRequest()
@@ -69,8 +68,8 @@ class AssetsChangeListenerTest extends TestCase
         $kernel  = $this->prophesize(HttpKernelInterface::class);
         $request = new Request();
 
-        $e = new FilterResponseEvent($kernel->reveal(), $request, HttpKernelInterface::SUB_REQUEST, new Response());
+        $e = new GetResponseEvent($kernel->reveal(), $request, HttpKernelInterface::SUB_REQUEST);
 
-        $this->assets_change_listener->onKernelResponse($e);
+        $this->assets_change_listener->onKernelRequest($e);
     }
 }

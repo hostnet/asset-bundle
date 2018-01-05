@@ -17,14 +17,9 @@ use Hostnet\Component\Resolver\Config\SimpleConfig;
 use Hostnet\Component\Resolver\FileSystem\FileWriter;
 use Hostnet\Component\Resolver\Import\ImportFinder;
 use Hostnet\Component\Resolver\Import\Nodejs\Executable;
-use Hostnet\Component\Resolver\Plugin\AngularPlugin;
-use Hostnet\Component\Resolver\Plugin\CorePlugin;
-use Hostnet\Component\Resolver\Plugin\LessPlugin;
-use Hostnet\Component\Resolver\Plugin\MinifyPlugin;
 use Hostnet\Component\Resolver\Plugin\PluginActivator;
 use Hostnet\Component\Resolver\Plugin\PluginApi;
 use Hostnet\Component\Resolver\Plugin\PluginInterface;
-use Hostnet\Component\Resolver\Plugin\TsPlugin;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -195,7 +190,7 @@ final class HostnetAssetExtension extends Extension
             new Reference('hostnet_asset.bundler'),
             new Reference('hostnet_asset.config'),
         ]))
-            ->addTag('kernel.event_listener', ['event' => KernelEvents::RESPONSE, 'method' => 'onKernelResponse'])
+            ->addTag('kernel.event_listener', ['event' => KernelEvents::REQUEST, 'method' => 'onKernelRequest'])
             ->setPublic(false);
 
         $container->setDefinition('hostnet_asset.listener.assets_change', $change_listener);
