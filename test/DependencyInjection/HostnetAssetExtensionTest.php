@@ -17,6 +17,7 @@ use Hostnet\Component\Resolver\Plugin\LessPlugin;
 use Hostnet\Component\Resolver\Plugin\TsPlugin;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use Symfony\Component\Debug\BufferingLogger;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
@@ -61,6 +62,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.plugin.api',
             'hostnet_asset.plugin.activator',
             'hostnet_asset.bundler',
+            'hostnet_asset.logger',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
             'hostnet_asset.command.debug',
@@ -92,6 +94,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.plugin.api',
             'hostnet_asset.plugin.activator',
             'hostnet_asset.bundler',
+            'hostnet_asset.logger',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
             'hostnet_asset.command.debug',
@@ -127,6 +130,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.plugin.api',
             'hostnet_asset.plugin.activator',
             'hostnet_asset.bundler',
+            'hostnet_asset.logger',
             'hostnet_asset.command.compile',
             'hostnet_asset.twig.extension',
         ], array_keys($container->getDefinitions()));
@@ -162,6 +166,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.plugin.api',
             'hostnet_asset.plugin.activator',
             'hostnet_asset.bundler',
+            'hostnet_asset.logger',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
             'hostnet_asset.command.debug',
@@ -199,6 +204,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.plugin.api',
             'hostnet_asset.plugin.activator',
             'hostnet_asset.bundler',
+            'hostnet_asset.logger',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
             'hostnet_asset.command.debug',
@@ -236,6 +242,7 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.plugin.api',
             'hostnet_asset.plugin.activator',
             'hostnet_asset.bundler',
+            'hostnet_asset.logger',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
             'hostnet_asset.command.debug',
@@ -277,7 +284,7 @@ class HostnetAssetExtensionTest extends TestCase
 
         self::assertEquals((new Definition(ContentPipeline::class, [
             new Reference('event_dispatcher'),
-            new Reference('logger'),
+            new Reference('hostnet_asset.logger'),
             new Reference('hostnet_asset.config'),
             new Reference('hostnet_asset.file_writer')
         ]))->setPublic(false), $container->getDefinition('hostnet_asset.pipline'));
@@ -286,7 +293,7 @@ class HostnetAssetExtensionTest extends TestCase
             (new Definition(PipelineBundler::class, [
                 new Reference('hostnet_asset.import_finder'),
                 new Reference('hostnet_asset.pipline'),
-                new Reference('logger'),
+                new Reference('hostnet_asset.logger'),
                 new Reference('hostnet_asset.config'),
                 new Reference('hostnet_asset.runner'),
             ]))
@@ -299,6 +306,7 @@ class HostnetAssetExtensionTest extends TestCase
             (new Definition(CompileCommand::class, [
                 new Reference('hostnet_asset.bundler'),
                 new Reference('hostnet_asset.config'),
+                new Reference('hostnet_asset.logger'),
             ]))
                 ->setPublic(false)
                 ->addTag('console.command'),
@@ -345,7 +353,7 @@ class HostnetAssetExtensionTest extends TestCase
         $container->setParameter('kernel.root_dir', __DIR__);
 
         $container->setDefinition('event_dispatcher', new Definition(EventDispatcher::class));
-        $container->setDefinition('logger', new Definition(NullLogger::class));
+        $container->setDefinition('hostnet_asset.logger', new Definition(BufferingLogger::class));
 
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],

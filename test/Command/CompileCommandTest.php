@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Debug\BufferingLogger;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -35,7 +36,8 @@ class CompileCommandTest extends TestCase
 
         $this->compile_command = new CompileCommand(
             $this->bundler->reveal(),
-            $this->config->reveal()
+            $this->config->reveal(),
+            new BufferingLogger()
         );
     }
 
@@ -45,6 +47,9 @@ class CompileCommandTest extends TestCase
         $this->config->getEventDispatcher()->willReturn(new EventDispatcher());
 
         $output = $this->prophesize(OutputInterface::class);
+        $output->getVerbosity()->willReturn(OutputInterface::VERBOSITY_VERY_VERBOSE);
+        $output->writeln(Argument::containingString('Time: '))->shouldBeCalled();
+        $output->writeln('')->shouldBeCalled();
 
         $this->bundler
             ->execute(Argument::type(ReaderInterface::class), Argument::type(WriterInterface::class))
