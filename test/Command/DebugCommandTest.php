@@ -29,7 +29,7 @@ class DebugCommandTest extends TestCase
 
     protected function setUp()
     {
-        $this->config  = $this->prophesize(ConfigInterface::class);
+        $this->config = $this->prophesize(ConfigInterface::class);
         $this->finder = $this->prophesize(ImportFinderInterface::class);
 
         $this->compile_command = new DebugCommand(
@@ -61,7 +61,7 @@ class DebugCommandTest extends TestCase
         $this->config->getOutputFolder()->willReturn('dev');
 
         $file = new File(basename(__DIR__) . '/' . basename(__FILE__));
-        $dep = new File(basename(__DIR__) . '/expected.output.txt');
+        $dep  = new File(basename(__DIR__) . '/expected.output.txt');
         $root = new RootFile($file);
         $root->addChild(new Dependency($dep));
 
@@ -88,7 +88,7 @@ class DebugCommandTest extends TestCase
         $this->config->getOutputFolder()->willReturn('dev');
 
         $file = new File(basename(__DIR__) . '/' . basename(__FILE__));
-        $dep = new File(basename(__DIR__) . '/expected.output.txt');
+        $dep  = new File(basename(__DIR__) . '/expected.output.txt');
         $root = new RootFile($file);
         $root->addChild(new Dependency($dep));
 
@@ -108,8 +108,8 @@ class DebugCommandTest extends TestCase
 
     private function filesize(string $file)
     {
-        $bytes = filesize($file);
-        $sizes = 'BKMGTP';
+        $bytes  = filesize($file);
+        $sizes  = 'BKMGTP';
         $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
 
         return sprintf('%.2f', $bytes / (1024 ** $factor)) . @$sizes[$factor];

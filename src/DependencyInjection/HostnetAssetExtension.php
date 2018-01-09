@@ -102,7 +102,6 @@ final class HostnetAssetExtension extends Extension
 
         $pipeline = (new Definition(ContentPipeline::class, [
             new Reference('event_dispatcher'),
-            new Reference('logger'),
             new Reference('hostnet_asset.config'),
             new Reference('hostnet_asset.file_writer'),
         ]))
@@ -126,7 +125,6 @@ final class HostnetAssetExtension extends Extension
         $bundler = (new Definition(PipelineBundler::class, [
             new Reference('hostnet_asset.import_finder'),
             new Reference('hostnet_asset.pipline'),
-            new Reference('logger'),
             new Reference('hostnet_asset.config'),
             new Reference('hostnet_asset.runner'),
         ]))
