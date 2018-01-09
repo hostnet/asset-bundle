@@ -18,7 +18,8 @@ final class CompileCommandRunner
 
     public static function runCommand(
         string $console = 'bin/console',
-        int $verbosity = OutputInterface::VERBOSITY_NORMAL
+        int $verbosity = OutputInterface::VERBOSITY_NORMAL,
+        bool $colors = false
     ) {
         switch ($verbosity) {
             case OutputInterface::VERBOSITY_DEBUG:
@@ -33,7 +34,9 @@ final class CompileCommandRunner
             default:
                 $vvv = '';
         }
-        $cmd = $console . ' assets:compile --env=prod' . $vvv;
+
+        $ansi = $colors ? ' --ansi' : '';
+        $cmd  = $console . ' assets:compile --env=prod' . $ansi . $vvv;
 
         $resource = proc_open($cmd, [1 => ['pipe', 'w']], $pipes);
 
@@ -44,10 +47,11 @@ final class CompileCommandRunner
         // 1 => readable handle connected to child stdout
 
         while ($line = fgets($pipes[1])) {
+            echo $line;
+
             if ($line === CompileCommand::EXIT_MESSAGE . PHP_EOL) {
                 break;
             }
-            echo '> ' . $line;
         }
 
         // First close pipe to prevent deadlock

@@ -19,7 +19,7 @@ class CompileCommandRunnerTest extends TestCase
     public function testRunCommand(int $verbosity, string $expected)
     {
         $between = ' assets:compile --env=prod';
-        $this->expectOutputString('> ' . CompileCommand::EXIT_MESSAGE . $between . PHP_EOL);
+        $this->expectOutputString(CompileCommand::EXIT_MESSAGE . $between . PHP_EOL);
         CompileCommandRunner::runCommand('echo ' . CompileCommand::EXIT_MESSAGE);
     }
 

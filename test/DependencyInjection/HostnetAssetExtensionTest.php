@@ -277,7 +277,6 @@ class HostnetAssetExtensionTest extends TestCase
 
         self::assertEquals((new Definition(ContentPipeline::class, [
             new Reference('event_dispatcher'),
-            new Reference('logger'),
             new Reference('hostnet_asset.config'),
             new Reference('hostnet_asset.file_writer')
         ]))->setPublic(false), $container->getDefinition('hostnet_asset.pipline'));
@@ -286,7 +285,6 @@ class HostnetAssetExtensionTest extends TestCase
             (new Definition(PipelineBundler::class, [
                 new Reference('hostnet_asset.import_finder'),
                 new Reference('hostnet_asset.pipline'),
-                new Reference('logger'),
                 new Reference('hostnet_asset.config'),
                 new Reference('hostnet_asset.runner'),
             ]))
