@@ -3,7 +3,7 @@ File info:
   - Type: Entry Point
   - Size: {{SIZE}}
 
-Bundle bundled files: (dev/Command/DebugCommandTest.php)
+Bundle bundled files: (dev/Command/DebugCommandTest.js)
   - Command/DebugCommandTest.php
   - Command/expected.output.txt
 
