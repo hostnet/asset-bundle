@@ -9,6 +9,7 @@ framework:
 hostnet_asset:
     files:
         - foo.js
+        - subfolder/subfolder.js
     plugins:
         Hostnet\Component\Resolver\Plugin\CorePlugin: true
         Hostnet\Component\Resolver\Plugin\MinifyPlugin: true

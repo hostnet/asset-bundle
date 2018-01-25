@@ -1,8 +1,10 @@
 <?php
-declare(strict_types=1);
 /**
  * @copyright 2017 Hostnet B.V.
  */
+
+declare(strict_types=1);
+
 namespace Hostnet\Bundle\AssetBundle\Command;
 
 use Hostnet\Component\Resolver\Bundler\Asset;
@@ -74,24 +76,14 @@ class DebugCommand extends Command
         $file_obj = new File($file);
 
         if ($type === 'Entry Point') {
-            $entry_points = new EntryPoint($this->finder->all($file_obj));
+            $entry_points   = new EntryPoint($this->finder->all($file_obj), $this->config->getSplitStrategy());
+            $files_to_build = $entry_points->getFilesToBuild($output_dir);
+            foreach ($files_to_build as $output_file => $dependencies) {
+                $output->writeln('Bundle bundled files: (' . $output_file . ')');
 
-            $output->writeln('Bundle bundled files: (' . $entry_points->getBundleFile($output_dir)->path . ')');
-
-            foreach ($entry_points->getBundleFiles() as $dep) {
-                $output->writeln('  - ' . $dep->getFile()->getName());
-            }
-            if (\count($entry_points->getBundleFiles()) === 0) {
-                $output->writeln('  - None');
-            }
-
-            $output->writeln('Vendor bundled files: (' . $entry_points->getVendorFile($output_dir)->path . ')');
-
-            foreach ($entry_points->getVendorFiles() as $dep) {
-                $output->writeln('  - ' . $dep->getFile()->getName());
-            }
-            if (\count($entry_points->getVendorFiles()) === 0) {
-                $output->writeln('  - None');
+                foreach ($dependencies as $dep) {
+                    $output->writeln('  - ' . $dep->getFile()->getName());
+                }
             }
         } else {
             $root = new Asset($this->finder->all($file_obj), '.js');

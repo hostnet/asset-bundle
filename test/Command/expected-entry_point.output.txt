@@ -3,11 +3,9 @@ File info:
   - Type: Entry Point
   - Size: {{SIZE}}
 
-Bundle bundled files: (dev/DebugCommandTest.bundle.js)
+Bundle bundled files: (dev/Command/DebugCommandTest.php)
   - Command/DebugCommandTest.php
   - Command/expected.output.txt
-Vendor bundled files: (dev/DebugCommandTest.vendor.js)
-  - None
 
 Dependency tree:
   - Command/expected.output.txt
