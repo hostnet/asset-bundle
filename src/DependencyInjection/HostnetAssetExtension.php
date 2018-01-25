@@ -20,6 +20,7 @@ use Hostnet\Component\Resolver\Import\Nodejs\Executable;
 use Hostnet\Component\Resolver\Plugin\PluginActivator;
 use Hostnet\Component\Resolver\Plugin\PluginApi;
 use Hostnet\Component\Resolver\Plugin\PluginInterface;
+use Hostnet\Component\Resolver\Split\OneOnOneSplittingStrategy;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -63,6 +64,14 @@ final class HostnetAssetExtension extends Extension
         }
 
         $cache_dir = $container->getParameter('kernel.cache_dir') . '/assets';
+
+        $split_strategy = new Definition(
+            OneOnOneSplittingStrategy::class,
+            [$config['source_root'], $config['excluded_files']]
+        );
+        $split_strategy->setPublic(false);
+
+        $container->setDefinition('hostnet_asset.split_strategy', $split_strategy);
         // Create config
         $bundler_config = (new Definition(SimpleConfig::class, [
             $container->getParameter('kernel.debug'),
@@ -70,7 +79,6 @@ final class HostnetAssetExtension extends Extension
             $config['include_paths'],
             $config['files'],
             $config['assets'],
-            $config['excluded_files'],
             $config['web_root'],
             $container->getParameter('kernel.debug') ? $config['output_folder_dev'] : $config['output_folder'],
             $config['source_root'],
@@ -79,7 +87,9 @@ final class HostnetAssetExtension extends Extension
             $plugins,
             new Reference('hostnet_asset.node.executable'),
             new Reference('event_dispatcher'),
-            new Reference('logger')
+            new Reference('logger'),
+            null,
+            new Reference('hostnet_asset.split_strategy')
         ]))
             ->setPublic(false);
 

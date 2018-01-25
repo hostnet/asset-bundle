@@ -52,8 +52,8 @@ class FunctionalTest extends KernelTestCase
         self::assertEquals(
             [
                 'web' . DIRECTORY_SEPARATOR . 'dev/require.js',
-                'web' . DIRECTORY_SEPARATOR . 'dev/foo.bundle.js',
-                'web' . DIRECTORY_SEPARATOR . 'dev/foo.vendor.js'
+                'web' . DIRECTORY_SEPARATOR . 'dev/foo.js',
+                'web' . DIRECTORY_SEPARATOR . 'dev/subfolder/subfolder.js',
             ],
             array_keys($writer->files)
         );

@@ -10,6 +10,7 @@ use Hostnet\Component\Resolver\File;
 use Hostnet\Component\Resolver\Import\Dependency;
 use Hostnet\Component\Resolver\Import\ImportFinderInterface;
 use Hostnet\Component\Resolver\Import\RootFile;
+use Hostnet\Component\Resolver\Split\OneOnOneSplittingStrategy;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -58,6 +59,7 @@ class DebugCommandTest extends TestCase
         $this->config->getSourceRoot()->willReturn(basename(__DIR__));
         $this->config->getEntryPoints()->willReturn([basename(__FILE__)]);
         $this->config->getAssetFiles()->willReturn([]);
+        $this->config->getSplitStrategy()->willReturn(new OneOnOneSplittingStrategy());
         $this->config->getOutputFolder()->willReturn('dev');
 
         $file = new File(basename(__DIR__) . '/' . basename(__FILE__));

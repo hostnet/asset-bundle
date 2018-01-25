@@ -52,6 +52,7 @@ class HostnetAssetExtensionTest extends TestCase
         self::assertEquals([
             'service_container',
             'hostnet_asset.node.executable',
+            'hostnet_asset.split_strategy',
             'hostnet_asset.config',
             'hostnet_asset.runner',
             'hostnet_asset.import_finder',
@@ -83,6 +84,7 @@ class HostnetAssetExtensionTest extends TestCase
         self::assertEquals([
             'service_container',
             'hostnet_asset.node.executable',
+            'hostnet_asset.split_strategy',
             'hostnet_asset.config',
             'hostnet_asset.runner',
             'hostnet_asset.import_finder',
@@ -118,6 +120,7 @@ class HostnetAssetExtensionTest extends TestCase
         self::assertEquals([
             'service_container',
             'hostnet_asset.node.executable',
+            'hostnet_asset.split_strategy',
             'hostnet_asset.config',
             'hostnet_asset.runner',
             'hostnet_asset.import_finder',
@@ -153,6 +156,7 @@ class HostnetAssetExtensionTest extends TestCase
             'service_container',
             'hostnet_asset.node.executable',
             TsPlugin::class,
+            'hostnet_asset.split_strategy',
             'hostnet_asset.config',
             'hostnet_asset.runner',
             'hostnet_asset.import_finder',
@@ -190,6 +194,7 @@ class HostnetAssetExtensionTest extends TestCase
             'service_container',
             'hostnet_asset.node.executable',
             LessPlugin::class,
+            'hostnet_asset.split_strategy',
             'hostnet_asset.config',
             'hostnet_asset.runner',
             'hostnet_asset.import_finder',
@@ -227,6 +232,7 @@ class HostnetAssetExtensionTest extends TestCase
             'service_container',
             'hostnet_asset.node.executable',
             AngularPlugin::class,
+            'hostnet_asset.split_strategy',
             'hostnet_asset.config',
             'hostnet_asset.runner',
             'hostnet_asset.import_finder',
@@ -253,14 +259,14 @@ class HostnetAssetExtensionTest extends TestCase
 
         self::assertSame($is_dev, $definition->getArgument(0));
         self::assertSame(__DIR__, $definition->getArgument(1));
-        self::assertSame('web', $definition->getArgument(6));
-        self::assertSame($output_folder, $definition->getArgument(7));
+        self::assertSame('web', $definition->getArgument(5));
+        self::assertSame($output_folder, $definition->getArgument(6));
 
         $plugin_references = [];
         foreach ($plugins as $plugin) {
             $plugin_references[] = new Reference($plugin);
         }
-        self::assertEquals($plugin_references, $definition->getArgument(11));
+        self::assertEquals($plugin_references, $definition->getArgument(10));
     }
 
     private function validateBaseServiceDefinitions(ContainerBuilder $container)
