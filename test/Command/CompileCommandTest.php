@@ -69,7 +69,9 @@ class CompileCommandTest extends TestCase
         $output = $this->prophesize(OutputInterface::class);
         $output->getVerbosity()->willReturn(OutputInterface::VERBOSITY_VERBOSE);
         $output->writeln(CompileCommand::EXIT_MESSAGE)->shouldBeCalled();
-        $output->writeln("Total time: 0ms\n")->shouldBeCalled();
+        $output->writeln(Argument::that(function (string $v) {
+            return preg_match('/Total time: \dms/i', $v);
+        }))->shouldBeCalled();
 
         $this->bundler
             ->execute(Argument::type(ReaderInterface::class), Argument::type(WriterInterface::class))
@@ -92,7 +94,9 @@ class CompileCommandTest extends TestCase
         $output->writeln(CompileCommand::EXIT_MESSAGE)->shouldBeCalled();
         $output->writeln('')->shouldBeCalled();
         $output->writeln(' Asset   Size    Status ')->shouldBeCalled();
-        $output->writeln("Total time: 0ms\n")->shouldBeCalled();
+        $output->writeln(Argument::that(function (string $v) {
+            return preg_match('/Total time: \dms/i', $v);
+        }))->shouldBeCalled();
 
         $this->bundler
             ->execute(Argument::type(ReaderInterface::class), Argument::type(WriterInterface::class))
