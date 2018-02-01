@@ -23,7 +23,8 @@
         "twig/twig":          "^1.26||^2.0"
     },
     "conflict": {
-        "twig/twig": "<1.26"
+        "twig/twig": "<1.26",
+        "phpdocumentor/type-resolver" : "<0.4"
     },
     "autoload": {
         "psr-4": {
