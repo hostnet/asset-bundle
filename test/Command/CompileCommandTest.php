@@ -95,7 +95,7 @@ class CompileCommandTest extends TestCase
         $output->writeln('')->shouldBeCalled();
         $output->writeln(' Asset   Size    Status ')->shouldBeCalled();
         $output->writeln(Argument::that(function (string $v) {
-            return preg_match('/Total time: \dms/i', $v);
+            return preg_match('/Total time: \d+ms/i', $v);
         }))->shouldBeCalled();
 
         $this->bundler
