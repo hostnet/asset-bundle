@@ -16,10 +16,10 @@ class TestKernel extends Kernel
      */
     public function registerBundles()
     {
-        return array(
+        return [
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Hostnet\Bundle\AssetBundle\HostnetAssetBundle(),
-        );
+        ];
     }
 
     /**
@@ -27,7 +27,7 @@ class TestKernel extends Kernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load(__DIR__.'/config/config.yml');
+        $loader->load(__DIR__ . '/config/config.yml');
     }
 
     /**
@@ -35,7 +35,7 @@ class TestKernel extends Kernel
      */
     public function getCacheDir()
     {
-        return __DIR__.'/../../../var/cache/' . $this->getEnvironment();
+        return __DIR__ . '/../../../var/cache/' . $this->getEnvironment();
     }
 
     /**
@@ -43,6 +43,6 @@ class TestKernel extends Kernel
      */
     public function getLogDir()
     {
-        return __DIR__.'/../../../var/logs';
+        return __DIR__ . '/../../../var/logs';
     }
 }

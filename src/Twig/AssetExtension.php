@@ -1,8 +1,8 @@
 <?php
-declare(strict_types=1);
 /**
  * @copyright 2017 Hostnet B.V.
  */
+declare(strict_types=1);
 
 namespace Hostnet\Bundle\AssetBundle\Twig;
 
@@ -20,7 +20,7 @@ final class AssetExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('asset_url', [$this, 'assetUrl'])
+            new \Twig_SimpleFunction('asset_url', [$this, 'assetUrl']),
         ];
     }
 
