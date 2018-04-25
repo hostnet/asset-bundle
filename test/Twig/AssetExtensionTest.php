@@ -3,6 +3,7 @@
  * @copyright 2017 Hostnet B.V.
  */
 declare(strict_types=1);
+
 namespace Hostnet\Bundle\AssetBundle\Twig;
 
 use Hostnet\Component\Resolver\Config\ConfigInterface;
@@ -30,7 +31,7 @@ class AssetExtensionTest extends TestCase
     public function testGetFunctions()
     {
         self::assertEquals([
-            new \Twig_SimpleFunction('asset_url', [$this->asset_extension, 'assetUrl'])
+            new \Twig_SimpleFunction('asset_url', [$this->asset_extension, 'assetUrl']),
         ], $this->asset_extension->getFunctions());
     }
 

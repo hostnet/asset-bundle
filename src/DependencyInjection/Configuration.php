@@ -3,6 +3,7 @@
  * @copyright 2017 Hostnet B.V.
  */
 declare(strict_types=1);
+
 namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 
 use Hostnet\Component\Resolver\Config\UnixSocketType;
@@ -30,7 +31,7 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->arrayNode('include_paths')
                     ->info(
-                        'List of additional folders from which modules can be loaded. '.
+                        'List of additional folders from which modules can be loaded. ' .
                         'Relative paths are from the project root dir.'
                     )
                     ->prototype('scalar')->end()

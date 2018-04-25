@@ -3,6 +3,7 @@
  * @copyright 2017 Hostnet B.V.
  */
 declare(strict_types=1);
+
 namespace Hostnet\Bundle\AssetBundle\EventListener;
 
 use Hostnet\Component\Resolver\Bundler\PipelineBundler;

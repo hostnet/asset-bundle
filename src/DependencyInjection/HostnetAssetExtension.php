@@ -1,8 +1,9 @@
 <?php
-declare(strict_types = 1);
 /**
  * @copyright 2017 Hostnet B.V.
  */
+declare(strict_types=1);
+
 namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 
 use Hostnet\Bundle\AssetBundle\Command\CompileCommand;
@@ -89,7 +90,7 @@ final class HostnetAssetExtension extends Extension
             new Reference('event_dispatcher'),
             new Reference('logger'),
             null,
-            new Reference('hostnet_asset.split_strategy')
+            new Reference('hostnet_asset.split_strategy'),
         ]))
             ->setPublic(false);
 
@@ -106,7 +107,7 @@ final class HostnetAssetExtension extends Extension
             ->setPublic(false);
         $writer        = (new Definition(FileWriter::class, [
             new Reference('event_dispatcher'),
-            $container->getParameter('kernel.project_dir')
+            $container->getParameter('kernel.project_dir'),
         ]))
             ->setPublic(false);
 
@@ -125,7 +126,7 @@ final class HostnetAssetExtension extends Extension
             new Reference('hostnet_asset.pipline'),
             new Reference('hostnet_asset.import_finder'),
             new Reference('hostnet_asset.config'),
-            new Reference('hostnet_asset.cache')
+            new Reference('hostnet_asset.cache'),
         ]))
             ->setPublic(false);
 
@@ -177,16 +178,18 @@ final class HostnetAssetExtension extends Extension
 
         $container->setDefinition('hostnet_asset.command.compile', $compile);
 
-        if ($container->getParameter('kernel.debug')) {
-            $debug = (new Definition(DebugCommand::class, [
-                new Reference('hostnet_asset.config'),
-                new Reference('hostnet_asset.import_finder'),
-            ]))
-                ->addTag('console.command')
-                ->setPublic(false);
-
-            $container->setDefinition('hostnet_asset.command.debug', $debug);
+        if (!$container->getParameter('kernel.debug')) {
+            return;
         }
+
+        $debug = (new Definition(DebugCommand::class, [
+            new Reference('hostnet_asset.config'),
+            new Reference('hostnet_asset.import_finder'),
+        ]))
+            ->addTag('console.command')
+            ->setPublic(false);
+
+        $container->setDefinition('hostnet_asset.command.debug', $debug);
     }
 
     private function configureEventListeners(ContainerBuilder $container)

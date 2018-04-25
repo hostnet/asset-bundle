@@ -3,6 +3,7 @@
  * @copyright 2017 Hostnet B.V.
  */
 declare(strict_types=1);
+
 namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 
 use Hostnet\Bundle\AssetBundle\Command\CompileCommand;
@@ -78,7 +79,7 @@ class HostnetAssetExtensionTest extends TestCase
         $container->setParameter('kernel.cache_dir', __DIR__);
 
         $this->hostnet_asset_extension->load([[
-            'bin' => ['node' => '/usr/bin/node']
+            'bin' => ['node' => '/usr/bin/node'],
         ]], $container);
 
         self::assertEquals([
@@ -114,7 +115,7 @@ class HostnetAssetExtensionTest extends TestCase
         $container->setParameter('kernel.cache_dir', __DIR__);
 
         $this->hostnet_asset_extension->load([[
-            'bin' => ['node' => '/usr/bin/node']
+            'bin' => ['node' => '/usr/bin/node'],
         ]], $container);
 
         self::assertEquals([
@@ -149,7 +150,7 @@ class HostnetAssetExtensionTest extends TestCase
 
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
-            'plugins' => [TsPlugin::class => true]
+            'plugins' => [TsPlugin::class => true],
         ]], $container);
 
         self::assertEquals([
@@ -187,7 +188,7 @@ class HostnetAssetExtensionTest extends TestCase
 
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
-            'plugins' => [LessPlugin::class => true]
+            'plugins' => [LessPlugin::class => true],
         ]], $container);
 
         self::assertEquals([
@@ -225,7 +226,7 @@ class HostnetAssetExtensionTest extends TestCase
 
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
-            'plugins' => [AngularPlugin::class => true]
+            'plugins' => [AngularPlugin::class => true],
         ]], $container);
 
         self::assertEquals([
@@ -273,7 +274,7 @@ class HostnetAssetExtensionTest extends TestCase
     {
         self::assertEquals((new Definition(Executable::class, [
             '/usr/bin/node',
-            '%kernel.root_dir%/../node_modules'
+            '%kernel.root_dir%/../node_modules',
         ]))->setPublic(false), $container->getDefinition('hostnet_asset.node.executable'));
 
         self::assertEquals(
@@ -284,7 +285,7 @@ class HostnetAssetExtensionTest extends TestCase
         self::assertEquals((new Definition(ContentPipeline::class, [
             new Reference('event_dispatcher'),
             new Reference('hostnet_asset.config'),
-            new Reference('hostnet_asset.file_writer')
+            new Reference('hostnet_asset.file_writer'),
         ]))->setPublic(false), $container->getDefinition('hostnet_asset.pipline'));
 
         self::assertEquals(
@@ -318,9 +319,11 @@ class HostnetAssetExtensionTest extends TestCase
             $container->getDefinition('hostnet_asset.twig.extension')
         );
 
-        if ($container->getParameter('kernel.debug')) {
-            $this->validateDebugServiceDefinitions($container);
+        if (!$container->getParameter('kernel.debug')) {
+            return;
         }
+
+        $this->validateDebugServiceDefinitions($container);
     }
 
     private function validateDebugServiceDefinitions(ContainerBuilder $container)
@@ -333,7 +336,7 @@ class HostnetAssetExtensionTest extends TestCase
                 ->setPublic(false)
                 ->addTag('kernel.event_listener', [
                     'event' => KernelEvents::REQUEST,
-                    'method' => 'onKernelRequest'
+                    'method' => 'onKernelRequest',
                 ]),
             $container->getDefinition('hostnet_asset.listener.assets_change')
         );
@@ -356,8 +359,8 @@ class HostnetAssetExtensionTest extends TestCase
             'plugins' => [
                 TsPlugin::class => true,
                 LessPlugin::class => true,
-                AngularPlugin::class => true
-            ]
+                AngularPlugin::class => true,
+            ],
         ]], $container);
 
         $container->compile();
@@ -384,8 +387,8 @@ class HostnetAssetExtensionTest extends TestCase
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
             'plugins' => [
-                \stdClass::class => true
-            ]
+                \stdClass::class => true,
+            ],
         ]], $container);
 
         $container->compile();
@@ -406,8 +409,8 @@ class HostnetAssetExtensionTest extends TestCase
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
             'plugins' => [
-                MockPlugin::class => true
-            ]
+                MockPlugin::class => true,
+            ],
         ]], $container);
 
         // make the config public
