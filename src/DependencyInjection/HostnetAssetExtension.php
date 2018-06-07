@@ -48,8 +48,8 @@ final class HostnetAssetExtension extends Extension
         $container->setDefinition('hostnet_asset.node.executable', $node_executable);
 
         $plugins = [];
-        foreach ($config['plugins'] as $name => $is_enabled) {
-            if (! $is_enabled) {
+        foreach ($config['plugins'] as $name => $enabled) {
+            if ($enabled['disabled']) {
                 continue;
             }
 

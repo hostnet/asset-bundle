@@ -35,7 +35,7 @@ class FunctionalTest extends KernelTestCase
         $pipeline = $container->get('hostnet_asset.bundler');
         self::assertInstanceOf(PipelineBundler::class, $pipeline);
 
-        /* @var PipelineBundler $pipeline */
+        /** @var PipelineBundler $pipeline */
         $reader = new FileReader(__DIR__ . '/../../');
 
         $writer = new class implements WriterInterface {

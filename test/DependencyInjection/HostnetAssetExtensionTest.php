@@ -150,7 +150,7 @@ class HostnetAssetExtensionTest extends TestCase
 
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
-            'plugins' => [TsPlugin::class => true],
+            'plugins' => [TsPlugin::class => null],
         ]], $container);
 
         self::assertEquals([
@@ -188,7 +188,7 @@ class HostnetAssetExtensionTest extends TestCase
 
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
-            'plugins' => [LessPlugin::class => true],
+            'plugins' => [LessPlugin::class => null],
         ]], $container);
 
         self::assertEquals([
@@ -226,7 +226,7 @@ class HostnetAssetExtensionTest extends TestCase
 
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
-            'plugins' => [AngularPlugin::class => true],
+            'plugins' => [AngularPlugin::class => null],
         ]], $container);
 
         self::assertEquals([
@@ -357,11 +357,45 @@ class HostnetAssetExtensionTest extends TestCase
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
             'plugins' => [
-                TsPlugin::class => true,
-                LessPlugin::class => true,
-                AngularPlugin::class => true,
+                TsPlugin::class => null,
+                LessPlugin::class => null,
+                AngularPlugin::class => null,
             ],
         ]], $container);
+
+        self::assertContains(TsPlugin::class, array_keys($container->getDefinitions()));
+        self::assertContains(LessPlugin::class, array_keys($container->getDefinitions()));
+        self::assertContains(AngularPlugin::class, array_keys($container->getDefinitions()));
+
+        $container->compile();
+
+        self::assertInstanceOf(PipelineBundler::class, $container->get('hostnet_asset.bundler'));
+    }
+
+    public function testBuildWithDisabledPlugin()
+    {
+        $container = new ContainerBuilder();
+
+        $container->setParameter('kernel.debug', true);
+        $container->setParameter('kernel.project_dir', __DIR__);
+        $container->setParameter('kernel.cache_dir', __DIR__);
+        $container->setParameter('kernel.root_dir', __DIR__);
+
+        $container->setDefinition('event_dispatcher', new Definition(EventDispatcher::class));
+        $container->setDefinition('logger', new Definition(NullLogger::class));
+
+        $this->hostnet_asset_extension->load([[
+            'bin' => ['node' => '/usr/bin/node'],
+            'plugins' => [
+                TsPlugin::class => null,
+                LessPlugin::class => null,
+                AngularPlugin::class => ['disabled' => true],
+            ],
+        ]], $container);
+
+        self::assertContains(TsPlugin::class, array_keys($container->getDefinitions()));
+        self::assertContains(LessPlugin::class, array_keys($container->getDefinitions()));
+        self::assertNotContains(AngularPlugin::class, array_keys($container->getDefinitions()));
 
         $container->compile();
 
@@ -387,7 +421,7 @@ class HostnetAssetExtensionTest extends TestCase
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
             'plugins' => [
-                \stdClass::class => true,
+                \stdClass::class => null,
             ],
         ]], $container);
 
@@ -409,7 +443,7 @@ class HostnetAssetExtensionTest extends TestCase
         $this->hostnet_asset_extension->load([[
             'bin' => ['node' => '/usr/bin/node'],
             'plugins' => [
-                MockPlugin::class => true,
+                MockPlugin::class => null,
             ],
         ]], $container);
 
