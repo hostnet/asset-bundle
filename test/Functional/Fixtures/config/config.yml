@@ -11,11 +11,12 @@ hostnet_asset:
         - foo.js
         - subfolder/subfolder.js
     plugins:
-        Hostnet\Component\Resolver\Plugin\CorePlugin: true
-        Hostnet\Component\Resolver\Plugin\MinifyPlugin: true
-        Hostnet\Component\Resolver\Plugin\LessPlugin: true
-        Hostnet\Component\Resolver\Plugin\TsPlugin: true
-        Hostnet\Component\Resolver\Plugin\AngularPlugin: true
+        Hostnet\Component\Resolver\Plugin\CorePlugin: ~
+        Hostnet\Component\Resolver\Plugin\MinifyPlugin:
+            disabled: true
+        Hostnet\Component\Resolver\Plugin\LessPlugin: ~
+        Hostnet\Component\Resolver\Plugin\TsPlugin: ~
+        Hostnet\Component\Resolver\Plugin\AngularPlugin: ~
     source_root: test/Functional/Fixtures/resources/assets/
     output_folder: var/web
     enable_unix_socket: disabled
