@@ -6,12 +6,12 @@ declare(strict_types=1);
 
 namespace Hostnet\Bundle\AssetBundle\Command;
 
-use Hostnet\Component\Resolver\Bundler\PipelineBundler;
+use Hostnet\Component\Resolver\Builder\BuildConfig;
+use Hostnet\Component\Resolver\Builder\BundlerInterface;
 use Hostnet\Component\Resolver\Config\ConfigInterface;
-use Hostnet\Component\Resolver\FileSystem\FileReader;
-use Hostnet\Component\Resolver\FileSystem\FileWriter;
 use Hostnet\Component\Resolver\Report\ConsoleLoggingReporter;
 use Hostnet\Component\Resolver\Report\ConsoleReporter;
+use Hostnet\Component\Resolver\Report\Helper\FileSizeHelper;
 use Hostnet\Component\Resolver\Report\NullReporter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,22 +21,17 @@ final class CompileCommand extends Command
 {
     public const EXIT_MESSAGE = 'Compile command complete';
 
-    /**
-     * @var PipelineBundler
-     */
-    private $bundler;
-
-    /**
-     * @var ConfigInterface
-     */
     private $config;
+    private $bundler;
+    private $build_config;
 
-    public function __construct(PipelineBundler $bundler, ConfigInterface $config)
+    public function __construct(ConfigInterface $config, BundlerInterface $bundler, BuildConfig $build_config)
     {
         parent::__construct('assets:compile');
 
-        $this->bundler = $bundler;
-        $this->config  = $config;
+        $this->config       = $config;
+        $this->bundler      = $bundler;
+        $this->build_config = $build_config;
     }
 
     /**
@@ -46,13 +41,13 @@ final class CompileCommand extends Command
     {
         switch ($output->getVerbosity()) {
             case OutputInterface::VERBOSITY_DEBUG:
-                $reporter = new ConsoleReporter($this->config, true);
+                $reporter = new ConsoleReporter($this->config, new FileSizeHelper(), true);
                 break;
             case OutputInterface::VERBOSITY_VERY_VERBOSE:
-                $reporter = new ConsoleReporter($this->config);
+                $reporter = new ConsoleReporter($this->config, new FileSizeHelper());
                 break;
             case OutputInterface::VERBOSITY_VERBOSE:
-                $reporter = new ConsoleLoggingReporter($this->config, $output);
+                $reporter = new ConsoleLoggingReporter($this->config, $output, new FileSizeHelper());
                 break;
             default:
                 $reporter = new NullReporter();
@@ -60,12 +55,9 @@ final class CompileCommand extends Command
 
         $this->config->replaceReporter($reporter);
 
-        $reader = new FileReader($this->config->getProjectRoot());
-        $writer = new FileWriter($this->config->getEventDispatcher(), $this->config->getProjectRoot());
-
         $start = microtime(true);
 
-        $this->bundler->execute($reader, $writer);
+        $this->bundler->bundle($this->build_config);
 
         $end = microtime(true);
 

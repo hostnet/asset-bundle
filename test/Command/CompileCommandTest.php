@@ -6,10 +6,9 @@ declare(strict_types=1);
 
 namespace Hostnet\Bundle\AssetBundle\Command;
 
-use Hostnet\Component\Resolver\Bundler\PipelineBundler;
+use Hostnet\Component\Resolver\Builder\BuildConfig;
+use Hostnet\Component\Resolver\Builder\BundlerInterface;
 use Hostnet\Component\Resolver\Config\ConfigInterface;
-use Hostnet\Component\Resolver\FileSystem\ReaderInterface;
-use Hostnet\Component\Resolver\FileSystem\WriterInterface;
 use Hostnet\Component\Resolver\Report\ConsoleLoggingReporter;
 use Hostnet\Component\Resolver\Report\ConsoleReporter;
 use Hostnet\Component\Resolver\Report\NullReporter;
@@ -18,7 +17,6 @@ use Prophecy\Argument;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * @covers \Hostnet\Bundle\AssetBundle\Command\CompileCommand
@@ -27,6 +25,7 @@ class CompileCommandTest extends TestCase
 {
     private $bundler;
     private $config;
+    private $build_config;
 
     /**
      * @var CompileCommand
@@ -35,28 +34,27 @@ class CompileCommandTest extends TestCase
 
     protected function setUp()
     {
-        $this->bundler = $this->prophesize(PipelineBundler::class);
-        $this->config  = $this->prophesize(ConfigInterface::class);
+        $this->config       = $this->prophesize(ConfigInterface::class);
+        $this->bundler      = $this->prophesize(BundlerInterface::class);
+        $this->build_config = $this->prophesize(BuildConfig::class);
 
         $this->compile_command = new CompileCommand(
+            $this->config->reveal(),
             $this->bundler->reveal(),
-            $this->config->reveal()
+            $this->build_config->reveal()
         );
     }
 
     public function testExecute()
     {
         $this->config->getProjectRoot()->willReturn(__DIR__);
-        $this->config->getEventDispatcher()->willReturn(new EventDispatcher());
         $this->config->replaceReporter(Argument::type(NullReporter::class))->willReturn(new NullReporter());
 
         $output = $this->prophesize(OutputInterface::class);
         $output->getVerbosity()->willReturn(OutputInterface::VERBOSITY_NORMAL);
         $output->writeln(CompileCommand::EXIT_MESSAGE)->shouldBeCalled();
 
-        $this->bundler
-            ->execute(Argument::type(ReaderInterface::class), Argument::type(WriterInterface::class))
-            ->shouldBeCalled();
+        $this->bundler->bundle($this->build_config)->shouldBeCalled();
 
         $this->compile_command->run(new ArrayInput([]), $output->reveal());
     }
@@ -64,7 +62,6 @@ class CompileCommandTest extends TestCase
     public function testExecuteVerbose()
     {
         $this->config->getProjectRoot()->willReturn(__DIR__);
-        $this->config->getEventDispatcher()->willReturn(new EventDispatcher());
         $this->config->replaceReporter(Argument::type(ConsoleLoggingReporter::class))->willReturn(new NullReporter());
 
         $output = $this->prophesize(OutputInterface::class);
@@ -74,9 +71,7 @@ class CompileCommandTest extends TestCase
             return preg_match('/Total time: \dms/i', $v);
         }))->shouldBeCalled();
 
-        $this->bundler
-            ->execute(Argument::type(ReaderInterface::class), Argument::type(WriterInterface::class))
-            ->shouldBeCalled();
+        $this->bundler->bundle($this->build_config)->shouldBeCalled();
 
         $this->compile_command->run(new ArrayInput([]), $output->reveal());
     }
@@ -84,7 +79,6 @@ class CompileCommandTest extends TestCase
     public function testExecuteVeryVerbose()
     {
         $this->config->getProjectRoot()->willReturn(__DIR__);
-        $this->config->getEventDispatcher()->willReturn(new EventDispatcher());
         $this->config->replaceReporter(Argument::type(ConsoleReporter::class))->willReturn(new NullReporter());
 
         $formatter = $this->prophesize(OutputFormatterInterface::class);
@@ -99,9 +93,7 @@ class CompileCommandTest extends TestCase
             return preg_match('/Total time: \d+ms/i', $v);
         }))->shouldBeCalled();
 
-        $this->bundler
-            ->execute(Argument::type(ReaderInterface::class), Argument::type(WriterInterface::class))
-            ->shouldBeCalled();
+        $this->bundler->bundle($this->build_config)->shouldBeCalled();
 
         $this->compile_command->run(new ArrayInput([]), $output->reveal());
     }

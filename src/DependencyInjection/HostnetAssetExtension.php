@@ -10,12 +10,10 @@ use Hostnet\Bundle\AssetBundle\Command\CompileCommand;
 use Hostnet\Bundle\AssetBundle\Command\DebugCommand;
 use Hostnet\Bundle\AssetBundle\EventListener\AssetsChangeListener;
 use Hostnet\Bundle\AssetBundle\Twig\AssetExtension;
-use Hostnet\Component\Resolver\Bundler\Pipeline\ContentPipeline;
-use Hostnet\Component\Resolver\Bundler\PipelineBundler;
-use Hostnet\Component\Resolver\Bundler\Runner\RunnerInterface;
+use Hostnet\Component\Resolver\Builder\BuildConfig;
+use Hostnet\Component\Resolver\Builder\Bundler;
 use Hostnet\Component\Resolver\Cache\Cache;
 use Hostnet\Component\Resolver\Config\SimpleConfig;
-use Hostnet\Component\Resolver\FileSystem\FileWriter;
 use Hostnet\Component\Resolver\Import\ImportFinder;
 use Hostnet\Component\Resolver\Import\Nodejs\Executable;
 use Hostnet\Component\Resolver\Plugin\PluginActivator;
@@ -84,10 +82,8 @@ final class HostnetAssetExtension extends Extension
             $container->getParameter('kernel.debug') ? $config['output_folder_dev'] : $config['output_folder'],
             $config['source_root'],
             $cache_dir,
-            $config['enable_unix_socket'],
             $plugins,
             new Reference('hostnet_asset.node.executable'),
-            new Reference('event_dispatcher'),
             new Reference('logger'),
             null,
             new Reference('hostnet_asset.split_strategy'),
@@ -96,26 +92,8 @@ final class HostnetAssetExtension extends Extension
 
         $container->setDefinition('hostnet_asset.config', $bundler_config);
 
-        $runner = (new Definition(RunnerInterface::class))
-            ->setFactory([new Reference('hostnet_asset.config'), 'getRunner'])
-            ->setPublic(false);
-
-        $container->setDefinition('hostnet_asset.runner', $runner);
-
         // Register the main services.
         $import_finder = (new Definition(ImportFinder::class, [$container->getParameter('kernel.project_dir')]))
-            ->setPublic(false);
-        $writer        = (new Definition(FileWriter::class, [
-            new Reference('event_dispatcher'),
-            $container->getParameter('kernel.project_dir'),
-        ]))
-            ->setPublic(false);
-
-        $pipeline = (new Definition(ContentPipeline::class, [
-            new Reference('event_dispatcher'),
-            new Reference('hostnet_asset.config'),
-            new Reference('hostnet_asset.file_writer'),
-        ]))
             ->setPublic(false);
 
         $cache = (new Definition(Cache::class, [$cache_dir . '/dependencies']))
@@ -123,31 +101,31 @@ final class HostnetAssetExtension extends Extension
             ->addMethodCall('load');
 
         $plugin_api = (new Definition(PluginApi::class, [
-            new Reference('hostnet_asset.pipline'),
             new Reference('hostnet_asset.import_finder'),
             new Reference('hostnet_asset.config'),
             new Reference('hostnet_asset.cache'),
+            new Reference('hostnet_asset.build_config'),
         ]))
             ->setPublic(false);
 
         $plugin_activator = (new Definition(PluginActivator::class, [new Reference('hostnet_asset.plugin.api')]))
             ->setPublic(false);
 
-        $bundler = (new Definition(PipelineBundler::class, [
+        $build_plan = (new Definition(BuildConfig::class, [new Reference('hostnet_asset.config')]))
+            ->setPublic(true);
+
+        $bundler = (new Definition(Bundler::class, [
             new Reference('hostnet_asset.import_finder'),
-            new Reference('hostnet_asset.pipline'),
             new Reference('hostnet_asset.config'),
-            new Reference('hostnet_asset.runner'),
         ]))
             ->setConfigurator([new Reference('hostnet_asset.plugin.activator'), 'ensurePluginsAreActivated'])
             ->setPublic(true);
 
         $container->setDefinition('hostnet_asset.import_finder', $import_finder);
-        $container->setDefinition('hostnet_asset.file_writer', $writer);
-        $container->setDefinition('hostnet_asset.pipline', $pipeline);
         $container->setDefinition('hostnet_asset.cache', $cache);
         $container->setDefinition('hostnet_asset.plugin.api', $plugin_api);
         $container->setDefinition('hostnet_asset.plugin.activator', $plugin_activator);
+        $container->setDefinition('hostnet_asset.build_config', $build_plan);
         $container->setDefinition('hostnet_asset.bundler', $bundler);
 
         // Register event listeners
@@ -170,8 +148,9 @@ final class HostnetAssetExtension extends Extension
     private function configureCommands(ContainerBuilder $container)
     {
         $compile = (new Definition(CompileCommand::class, [
-            new Reference('hostnet_asset.bundler'),
             new Reference('hostnet_asset.config'),
+            new Reference('hostnet_asset.bundler'),
+            new Reference('hostnet_asset.build_config'),
         ]))
             ->addTag('console.command')
             ->setPublic(false);
@@ -199,7 +178,7 @@ final class HostnetAssetExtension extends Extension
         }
         $change_listener = (new Definition(AssetsChangeListener::class, [
             new Reference('hostnet_asset.bundler'),
-            new Reference('hostnet_asset.config'),
+            new Reference('hostnet_asset.build_config'),
         ]))
             ->addTag('kernel.event_listener', ['event' => KernelEvents::REQUEST, 'method' => 'onKernelRequest'])
             ->setPublic(false);

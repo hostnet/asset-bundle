@@ -6,13 +6,9 @@ declare(strict_types=1);
 
 namespace Hostnet\Bundle\AssetBundle\EventListener;
 
-use Hostnet\Component\Resolver\Bundler\PipelineBundler;
-use Hostnet\Component\Resolver\Config\ConfigInterface;
-use Hostnet\Component\Resolver\FileSystem\ReaderInterface;
-use Hostnet\Component\Resolver\FileSystem\WriterInterface;
+use Hostnet\Component\Resolver\Builder\BuildConfig;
+use Hostnet\Component\Resolver\Builder\BundlerInterface;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -32,8 +28,8 @@ class AssetsChangeListenerTest extends TestCase
 
     protected function setUp()
     {
-        $this->bundler = $this->prophesize(PipelineBundler::class);
-        $this->config  = $this->prophesize(ConfigInterface::class);
+        $this->bundler = $this->prophesize(BundlerInterface::class);
+        $this->config  = $this->prophesize(BuildConfig::class);
 
         $this->assets_change_listener = new AssetsChangeListener(
             $this->bundler->reveal(),
@@ -43,12 +39,7 @@ class AssetsChangeListenerTest extends TestCase
 
     public function testOnKernelRequest()
     {
-        $this->config->getProjectRoot()->willReturn(__DIR__);
-        $this->config->getEventDispatcher()->willReturn(new EventDispatcher());
-
-        $this->bundler
-            ->execute(Argument::type(ReaderInterface::class), Argument::type(WriterInterface::class))
-            ->shouldBeCalled();
+        $this->bundler->bundle($this->config)->shouldBeCalled();
 
         $kernel  = $this->prophesize(HttpKernelInterface::class);
         $request = new Request();
@@ -60,11 +51,7 @@ class AssetsChangeListenerTest extends TestCase
 
     public function testOnKernelResponseSubRequest()
     {
-        $this->config->getProjectRoot()->willReturn(__DIR__);
-
-        $this->bundler
-            ->execute()
-            ->shouldNotBeCalled();
+        $this->bundler->bundle()->shouldNotBeCalled();
 
         $kernel  = $this->prophesize(HttpKernelInterface::class);
         $request = new Request();
