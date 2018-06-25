@@ -15,10 +15,8 @@ hostnet_asset:
         Hostnet\Component\Resolver\Plugin\MinifyPlugin: true
         Hostnet\Component\Resolver\Plugin\LessPlugin: true
         Hostnet\Component\Resolver\Plugin\TsPlugin: true
-        Hostnet\Component\Resolver\Plugin\AngularPlugin: true
     source_root: test/Functional/Fixtures/resources/assets/
-    output_folder: var/web
-    enable_unix_socket: disabled
+    output_folder: "%kernel.project_dir%/var/web"
     bin:
         node: "echo"
         node_modules: "%kernel.project_dir%/node_modules"

@@ -6,29 +6,20 @@ declare(strict_types=1);
 
 namespace Hostnet\Bundle\AssetBundle\EventListener;
 
-use Hostnet\Component\Resolver\Bundler\PipelineBundler;
-use Hostnet\Component\Resolver\Config\ConfigInterface;
-use Hostnet\Component\Resolver\FileSystem\FileReader;
-use Hostnet\Component\Resolver\FileSystem\FileWriter;
+use Hostnet\Component\Resolver\Builder\BuildConfig;
+use Hostnet\Component\Resolver\Builder\BundlerInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 final class AssetsChangeListener
 {
-    /**
-     * @var PipelineBundler
-     */
     private $bundler;
+    private $build_config;
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(PipelineBundler $bundler, ConfigInterface $config)
+    public function __construct(BundlerInterface $bundler, BuildConfig $build_config)
     {
         $this->bundler = $bundler;
-        $this->config  = $config;
+        $this->build_config = $build_config;
     }
 
     public function onKernelRequest(GetResponseEvent $e): void
@@ -38,9 +29,6 @@ final class AssetsChangeListener
             return;
         }
 
-        $reader = new FileReader($this->config->getProjectRoot());
-        $writer = new FileWriter($this->config->getEventDispatcher(), $this->config->getProjectRoot());
-
-        $this->bundler->execute($reader, $writer);
+        $this->bundler->bundle($this->build_config);
     }
 }

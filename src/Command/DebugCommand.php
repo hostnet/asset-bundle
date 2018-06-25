@@ -6,8 +6,8 @@ declare(strict_types=1);
 
 namespace Hostnet\Bundle\AssetBundle\Command;
 
-use Hostnet\Component\Resolver\Bundler\Asset;
-use Hostnet\Component\Resolver\Bundler\EntryPoint;
+use Hostnet\Component\Resolver\Builder\Asset;
+use Hostnet\Component\Resolver\Builder\EntryPoint;
 use Hostnet\Component\Resolver\Config\ConfigInterface;
 use Hostnet\Component\Resolver\File;
 use Hostnet\Component\Resolver\Import\ImportFinderInterface;
@@ -85,7 +85,7 @@ class DebugCommand extends Command
                 }
             }
         } else {
-            $root = new Asset($this->finder->all($file_obj), '.js');
+            $root = new Asset($this->finder->all($file_obj));
 
             $output->writeln('Bundled files:');
 

@@ -9,11 +9,9 @@ namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 use Hostnet\Bundle\AssetBundle\Command\CompileCommand;
 use Hostnet\Bundle\AssetBundle\EventListener\AssetsChangeListener;
 use Hostnet\Bundle\AssetBundle\Twig\AssetExtension;
-use Hostnet\Component\Resolver\Bundler\Pipeline\ContentPipeline;
-use Hostnet\Component\Resolver\Bundler\PipelineBundler;
+use Hostnet\Component\Resolver\Builder\Bundler;
 use Hostnet\Component\Resolver\Import\ImportFinder;
 use Hostnet\Component\Resolver\Import\Nodejs\Executable;
-use Hostnet\Component\Resolver\Plugin\AngularPlugin;
 use Hostnet\Component\Resolver\Plugin\LessPlugin;
 use Hostnet\Component\Resolver\Plugin\TsPlugin;
 use PHPUnit\Framework\TestCase;
@@ -55,13 +53,11 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.node.executable',
             'hostnet_asset.split_strategy',
             'hostnet_asset.config',
-            'hostnet_asset.runner',
             'hostnet_asset.import_finder',
-            'hostnet_asset.file_writer',
-            'hostnet_asset.pipline',
             'hostnet_asset.cache',
             'hostnet_asset.plugin.api',
             'hostnet_asset.plugin.activator',
+            'hostnet_asset.build_config',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
@@ -87,13 +83,11 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.node.executable',
             'hostnet_asset.split_strategy',
             'hostnet_asset.config',
-            'hostnet_asset.runner',
             'hostnet_asset.import_finder',
-            'hostnet_asset.file_writer',
-            'hostnet_asset.pipline',
             'hostnet_asset.cache',
             'hostnet_asset.plugin.api',
             'hostnet_asset.plugin.activator',
+            'hostnet_asset.build_config',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
@@ -123,13 +117,11 @@ class HostnetAssetExtensionTest extends TestCase
             'hostnet_asset.node.executable',
             'hostnet_asset.split_strategy',
             'hostnet_asset.config',
-            'hostnet_asset.runner',
             'hostnet_asset.import_finder',
-            'hostnet_asset.file_writer',
-            'hostnet_asset.pipline',
             'hostnet_asset.cache',
             'hostnet_asset.plugin.api',
             'hostnet_asset.plugin.activator',
+            'hostnet_asset.build_config',
             'hostnet_asset.bundler',
             'hostnet_asset.command.compile',
             'hostnet_asset.twig.extension',
@@ -159,13 +151,11 @@ class HostnetAssetExtensionTest extends TestCase
             TsPlugin::class,
             'hostnet_asset.split_strategy',
             'hostnet_asset.config',
-            'hostnet_asset.runner',
             'hostnet_asset.import_finder',
-            'hostnet_asset.file_writer',
-            'hostnet_asset.pipline',
             'hostnet_asset.cache',
             'hostnet_asset.plugin.api',
             'hostnet_asset.plugin.activator',
+            'hostnet_asset.build_config',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
@@ -197,13 +187,11 @@ class HostnetAssetExtensionTest extends TestCase
             LessPlugin::class,
             'hostnet_asset.split_strategy',
             'hostnet_asset.config',
-            'hostnet_asset.runner',
             'hostnet_asset.import_finder',
-            'hostnet_asset.file_writer',
-            'hostnet_asset.pipline',
             'hostnet_asset.cache',
             'hostnet_asset.plugin.api',
             'hostnet_asset.plugin.activator',
+            'hostnet_asset.build_config',
             'hostnet_asset.bundler',
             'hostnet_asset.listener.assets_change',
             'hostnet_asset.command.compile',
@@ -212,44 +200,6 @@ class HostnetAssetExtensionTest extends TestCase
         ], array_keys($container->getDefinitions()));
 
         $this->assertConfig($container, true, 'dev', [LessPlugin::class]);
-
-        $this->validateBaseServiceDefinitions($container);
-    }
-
-    public function testLoadAngular()
-    {
-        $container = new ContainerBuilder();
-
-        $container->setParameter('kernel.debug', true);
-        $container->setParameter('kernel.project_dir', __DIR__);
-        $container->setParameter('kernel.cache_dir', __DIR__);
-
-        $this->hostnet_asset_extension->load([[
-            'bin' => ['node' => '/usr/bin/node'],
-            'plugins' => [AngularPlugin::class => true],
-        ]], $container);
-
-        self::assertEquals([
-            'service_container',
-            'hostnet_asset.node.executable',
-            AngularPlugin::class,
-            'hostnet_asset.split_strategy',
-            'hostnet_asset.config',
-            'hostnet_asset.runner',
-            'hostnet_asset.import_finder',
-            'hostnet_asset.file_writer',
-            'hostnet_asset.pipline',
-            'hostnet_asset.cache',
-            'hostnet_asset.plugin.api',
-            'hostnet_asset.plugin.activator',
-            'hostnet_asset.bundler',
-            'hostnet_asset.listener.assets_change',
-            'hostnet_asset.command.compile',
-            'hostnet_asset.command.debug',
-            'hostnet_asset.twig.extension',
-        ], array_keys($container->getDefinitions()));
-
-        $this->assertConfig($container, true, 'dev', [AngularPlugin::class]);
 
         $this->validateBaseServiceDefinitions($container);
     }
@@ -267,7 +217,8 @@ class HostnetAssetExtensionTest extends TestCase
         foreach ($plugins as $plugin) {
             $plugin_references[] = new Reference($plugin);
         }
-        self::assertEquals($plugin_references, $definition->getArgument(10));
+
+        self::assertEquals($plugin_references, $definition->getArgument(9));
     }
 
     private function validateBaseServiceDefinitions(ContainerBuilder $container)
@@ -282,18 +233,10 @@ class HostnetAssetExtensionTest extends TestCase
             $container->getDefinition('hostnet_asset.import_finder')
         );
 
-        self::assertEquals((new Definition(ContentPipeline::class, [
-            new Reference('event_dispatcher'),
-            new Reference('hostnet_asset.config'),
-            new Reference('hostnet_asset.file_writer'),
-        ]))->setPublic(false), $container->getDefinition('hostnet_asset.pipline'));
-
         self::assertEquals(
-            (new Definition(PipelineBundler::class, [
+            (new Definition(Bundler::class, [
                 new Reference('hostnet_asset.import_finder'),
-                new Reference('hostnet_asset.pipline'),
                 new Reference('hostnet_asset.config'),
-                new Reference('hostnet_asset.runner'),
             ]))
                 ->setPublic(true)
                 ->setConfigurator([new Reference('hostnet_asset.plugin.activator'), 'ensurePluginsAreActivated']),
@@ -302,8 +245,9 @@ class HostnetAssetExtensionTest extends TestCase
 
         self::assertEquals(
             (new Definition(CompileCommand::class, [
-                new Reference('hostnet_asset.bundler'),
                 new Reference('hostnet_asset.config'),
+                new Reference('hostnet_asset.bundler'),
+                new Reference('hostnet_asset.build_config'),
             ]))
                 ->setPublic(false)
                 ->addTag('console.command'),
@@ -331,7 +275,7 @@ class HostnetAssetExtensionTest extends TestCase
         self::assertEquals(
             (new Definition(AssetsChangeListener::class, [
                 new Reference('hostnet_asset.bundler'),
-                new Reference('hostnet_asset.config'),
+                new Reference('hostnet_asset.build_config'),
             ]))
                 ->setPublic(false)
                 ->addTag('kernel.event_listener', [
@@ -359,13 +303,12 @@ class HostnetAssetExtensionTest extends TestCase
             'plugins' => [
                 TsPlugin::class => true,
                 LessPlugin::class => true,
-                AngularPlugin::class => true,
             ],
         ]], $container);
 
         $container->compile();
 
-        self::assertInstanceOf(PipelineBundler::class, $container->get('hostnet_asset.bundler'));
+        self::assertInstanceOf(Bundler::class, $container->get('hostnet_asset.bundler'));
     }
 
     /**
