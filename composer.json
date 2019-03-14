@@ -20,7 +20,7 @@
         "hostnet/phpcs-tool": "^6.0.2",
         "phpunit/phpunit":    "^6.3",
         "symfony/yaml":       "^3.3||^4.0",
-        "twig/twig":          "^1.26||^2.0"
+        "twig/twig":          "^1.38.2||^2.7.2"
     },
     "conflict": {
         "twig/twig": "<1.26",
