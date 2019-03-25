@@ -7,8 +7,10 @@ declare(strict_types=1);
 namespace Hostnet\Bundle\AssetBundle\Twig;
 
 use Hostnet\Component\Resolver\Config\ConfigInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-final class AssetExtension extends \Twig_Extension
+final class AssetExtension extends AbstractExtension
 {
     private $config;
 
@@ -17,10 +19,13 @@ final class AssetExtension extends \Twig_Extension
         $this->config = $config;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('asset_url', [$this, 'assetUrl']),
+            new TwigFunction('asset_url', [$this, 'assetUrl']),
         ];
     }
 
