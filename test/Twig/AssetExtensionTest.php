@@ -8,6 +8,7 @@ namespace Hostnet\Bundle\AssetBundle\Twig;
 
 use Hostnet\Component\Resolver\Config\ConfigInterface;
 use PHPUnit\Framework\TestCase;
+use Twig\TwigFunction;
 
 /**
  * @covers \Hostnet\Bundle\AssetBundle\Twig\AssetExtension
@@ -21,21 +22,21 @@ class AssetExtensionTest extends TestCase
      */
     private $asset_extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->config = $this->prophesize(ConfigInterface::class);
 
         $this->asset_extension = new AssetExtension($this->config->reveal());
     }
 
-    public function testGetFunctions()
+    public function testGetFunctions(): void
     {
         self::assertEquals([
-            new \Twig_SimpleFunction('asset_url', [$this->asset_extension, 'assetUrl']),
+            new TwigFunction('asset_url', [$this->asset_extension, 'assetUrl']),
         ], $this->asset_extension->getFunctions());
     }
 
-    public function testAssetUrl()
+    public function testAssetUrl(): void
     {
         $this->config->getOutputFolder(false)->willReturn('phpunit');
         $this->config->getOutputFolder()->willReturn(basename(__DIR__));
