@@ -1,22 +1,26 @@
 <?php
 /**
- * @copyright 2017 Hostnet B.V.
+ * @copyright 2017-present Hostnet B.V.
  */
 declare(strict_types=1);
 
 namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Process\ExecutableFinder;
 
 final class Configuration implements ConfigurationInterface
 {
-    public function getConfigTreeBuilder()
+    public const CONFIG_ROOT = 'hostnet_asset';
+
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        $tree_builder = new TreeBuilder();
         $finder       = new ExecutableFinder();
-        $root_node    = $tree_builder->root('hostnet_asset');
+        $tree_builder = $this->createTreeBuilder();
+        $root_node    = $this->retrieveRootNode($tree_builder);
 
         $root_node
             ->children()
@@ -85,5 +89,27 @@ final class Configuration implements ConfigurationInterface
             ->end();
 
         return $tree_builder;
+    }
+
+    private function createTreeBuilder(): TreeBuilder
+    {
+        if (Kernel::VERSION_ID >= 40200) {
+            return new TreeBuilder(self::CONFIG_ROOT);
+        }
+        if (Kernel::VERSION_ID >= 30300 && Kernel::VERSION_ID < 40200) {
+            return new TreeBuilder();
+        }
+        throw new \RuntimeException('This bundle can only be used by Symfony 3.3 and up.');
+    }
+
+    private function retrieveRootNode(TreeBuilder $tree_builder): NodeDefinition
+    {
+        if (Kernel::VERSION_ID >= 40200) {
+            return $tree_builder->getRootNode();
+        }
+        if (Kernel::VERSION_ID >= 30300 && Kernel::VERSION_ID < 40200) {
+            return $tree_builder->root(self::CONFIG_ROOT);
+        }
+        throw new \RuntimeException('This bundle can only be used by Symfony 3.3 and up.');
     }
 }
