@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright 2017 Hostnet B.V.
+ * @copyright 2017-present Hostnet B.V.
  */
 declare(strict_types=1);
 
@@ -29,7 +29,7 @@ class DebugCommandTest extends TestCase
      */
     private $compile_command;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->config = $this->prophesize(ConfigInterface::class);
         $this->finder = $this->prophesize(ImportFinderInterface::class);
@@ -40,7 +40,7 @@ class DebugCommandTest extends TestCase
         );
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $this->config->getProjectRoot()->willReturn(dirname(__DIR__));
         $this->config->getSourceRoot()->willReturn(basename(__DIR__));
@@ -54,7 +54,7 @@ class DebugCommandTest extends TestCase
         self::assertStringEqualsFile(__DIR__ . '/expected.output.txt', $output->fetch());
     }
 
-    public function testExecuteWithEntryPoint()
+    public function testExecuteWithEntryPoint(): void
     {
         $this->config->getProjectRoot()->willReturn(dirname(__DIR__));
         $this->config->getSourceRoot()->willReturn(basename(__DIR__));
@@ -82,7 +82,7 @@ class DebugCommandTest extends TestCase
         ), $output->fetch());
     }
 
-    public function testExecuteWithAsset()
+    public function testExecuteWithAsset(): void
     {
         $this->config->getProjectRoot()->willReturn(dirname(__DIR__));
         $this->config->getSourceRoot()->willReturn(basename(__DIR__));

@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright 2017 Hostnet B.V.
+ * @copyright 2017-present Hostnet B.V.
  */
 declare(strict_types=1);
 
@@ -32,7 +32,7 @@ class CompileCommandTest extends TestCase
      */
     private $compile_command;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->config       = $this->prophesize(ConfigInterface::class);
         $this->bundler      = $this->prophesize(BundlerInterface::class);
@@ -45,7 +45,7 @@ class CompileCommandTest extends TestCase
         );
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $this->config->getProjectRoot()->willReturn(__DIR__);
         $this->config->replaceReporter(Argument::type(NullReporter::class))->willReturn(new NullReporter());
@@ -59,7 +59,7 @@ class CompileCommandTest extends TestCase
         $this->compile_command->run(new ArrayInput([]), $output->reveal());
     }
 
-    public function testExecuteVerbose()
+    public function testExecuteVerbose(): void
     {
         $this->config->getProjectRoot()->willReturn(__DIR__);
         $this->config->replaceReporter(Argument::type(ConsoleLoggingReporter::class))->willReturn(new NullReporter());
@@ -76,7 +76,7 @@ class CompileCommandTest extends TestCase
         $this->compile_command->run(new ArrayInput([]), $output->reveal());
     }
 
-    public function testExecuteVeryVerbose()
+    public function testExecuteVeryVerbose(): void
     {
         $this->config->getProjectRoot()->willReturn(__DIR__);
         $this->config->replaceReporter(Argument::type(ConsoleReporter::class))->willReturn(new NullReporter());

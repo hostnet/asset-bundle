@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright 2017-2018 Hostnet B.V.
+ * @copyright 2017-present Hostnet B.V.
  */
 declare(strict_types=1);
 
@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  */
 class FunctionalTest extends KernelTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         static::bootKernel();
     }
@@ -25,7 +25,7 @@ class FunctionalTest extends KernelTestCase
         return TestKernel::class;
     }
 
-    public function testGetBundler()
+    public function testGetBundler(): void
     {
         $container = self::$kernel->getContainer();
 

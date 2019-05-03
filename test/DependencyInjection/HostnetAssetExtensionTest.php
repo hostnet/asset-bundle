@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright 2017 Hostnet B.V.
+ * @copyright 2017-present Hostnet B.V.
  */
 declare(strict_types=1);
 
@@ -33,12 +33,12 @@ class HostnetAssetExtensionTest extends TestCase
      */
     private $hostnet_asset_extension;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->hostnet_asset_extension = new HostnetAssetExtension();
     }
 
-    public function testBlankConfig()
+    public function testBlankConfig(): void
     {
         $container = new ContainerBuilder();
 
@@ -66,7 +66,7 @@ class HostnetAssetExtensionTest extends TestCase
         ], array_keys($container->getDefinitions()));
     }
 
-    public function testLoadDebug()
+    public function testLoadDebug(): void
     {
         $container = new ContainerBuilder();
 
@@ -100,7 +100,7 @@ class HostnetAssetExtensionTest extends TestCase
         $this->validateBaseServiceDefinitions($container);
     }
 
-    public function testLoadProd()
+    public function testLoadProd(): void
     {
         $container = new ContainerBuilder();
 
@@ -132,7 +132,7 @@ class HostnetAssetExtensionTest extends TestCase
         $this->validateBaseServiceDefinitions($container);
     }
 
-    public function testLoadTypescript()
+    public function testLoadTypescript(): void
     {
         $container = new ContainerBuilder();
 
@@ -168,7 +168,7 @@ class HostnetAssetExtensionTest extends TestCase
         $this->validateBaseServiceDefinitions($container);
     }
 
-    public function testLoadLess()
+    public function testLoadLess(): void
     {
         $container = new ContainerBuilder();
 
@@ -204,7 +204,7 @@ class HostnetAssetExtensionTest extends TestCase
         $this->validateBaseServiceDefinitions($container);
     }
 
-    private function assertConfig(ContainerBuilder $container, bool $is_dev, string $output_folder, array $plugins = [])
+    private function assertConfig(ContainerBuilder $container, bool $is_dev, string $output_folder, array $plugins = []): void
     {
         $definition = $container->getDefinition('hostnet_asset.config');
 
@@ -221,7 +221,7 @@ class HostnetAssetExtensionTest extends TestCase
         self::assertEquals($plugin_references, $definition->getArgument(9));
     }
 
-    private function validateBaseServiceDefinitions(ContainerBuilder $container)
+    private function validateBaseServiceDefinitions(ContainerBuilder $container): void
     {
         self::assertEquals((new Definition(Executable::class, [
             '/usr/bin/node',
@@ -270,7 +270,7 @@ class HostnetAssetExtensionTest extends TestCase
         $this->validateDebugServiceDefinitions($container);
     }
 
-    private function validateDebugServiceDefinitions(ContainerBuilder $container)
+    private function validateDebugServiceDefinitions(ContainerBuilder $container): void
     {
         self::assertEquals(
             (new Definition(AssetsChangeListener::class, [
@@ -286,7 +286,7 @@ class HostnetAssetExtensionTest extends TestCase
         );
     }
 
-    public function testBuild()
+    public function testBuild(): void
     {
         $container = new ContainerBuilder();
 
@@ -315,7 +315,7 @@ class HostnetAssetExtensionTest extends TestCase
      * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      * @expectedExceptionMessage Class stdClass should implement Hostnet\Component\Resolver\Plugin\PluginInterface.
      */
-    public function testBuildNonPlugin()
+    public function testBuildNonPlugin(): void
     {
         $container = new ContainerBuilder();
 
@@ -337,7 +337,7 @@ class HostnetAssetExtensionTest extends TestCase
         $container->compile();
     }
 
-    public function testBuildNonBuiltin()
+    public function testBuildNonBuiltin(): void
     {
         $container = new ContainerBuilder();
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright 2017 Hostnet B.V.
+ * @copyright 2017-present Hostnet B.V.
  */
 declare(strict_types=1);
 
@@ -26,7 +26,7 @@ class AssetsChangeListenerTest extends TestCase
      */
     private $assets_change_listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->bundler = $this->prophesize(BundlerInterface::class);
         $this->config  = $this->prophesize(BuildConfig::class);
@@ -37,7 +37,7 @@ class AssetsChangeListenerTest extends TestCase
         );
     }
 
-    public function testOnKernelRequest()
+    public function testOnKernelRequest(): void
     {
         $this->bundler->bundle($this->config)->shouldBeCalled();
 
@@ -49,7 +49,7 @@ class AssetsChangeListenerTest extends TestCase
         $this->assets_change_listener->onKernelRequest($e);
     }
 
-    public function testOnKernelResponseSubRequest()
+    public function testOnKernelResponseSubRequest(): void
     {
         $this->bundler->bundle()->shouldNotBeCalled();
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright 2017 Hostnet B.V.
+ * @copyright 2017-present Hostnet B.V.
  */
 declare(strict_types=1);
 
@@ -145,7 +145,7 @@ final class HostnetAssetExtension extends Extension
         return new Reference($class);
     }
 
-    private function configureCommands(ContainerBuilder $container)
+    private function configureCommands(ContainerBuilder $container): void
     {
         $compile = (new Definition(CompileCommand::class, [
             new Reference('hostnet_asset.config'),
@@ -171,7 +171,7 @@ final class HostnetAssetExtension extends Extension
         $container->setDefinition('hostnet_asset.command.debug', $debug);
     }
 
-    private function configureEventListeners(ContainerBuilder $container)
+    private function configureEventListeners(ContainerBuilder $container): void
     {
         if (! $container->getParameter('kernel.debug')) {
             return;
@@ -186,7 +186,7 @@ final class HostnetAssetExtension extends Extension
         $container->setDefinition('hostnet_asset.listener.assets_change', $change_listener);
     }
 
-    private function configureTwig(ContainerBuilder $container)
+    private function configureTwig(ContainerBuilder $container): void
     {
         $ext = (new Definition(AssetExtension::class, [
             new Reference('hostnet_asset.config'),
