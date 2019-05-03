@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright 2017-2018 Hostnet B.V.
+ * @copyright 2017-present Hostnet B.V.
  */
 declare(strict_types=1);
 
@@ -28,14 +28,14 @@ class DebugCommand extends Command
         $this->finder = $finder;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Displays asset information.')
             ->addArgument('file');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         if ($input->getArgument('file')) {
             $this->checkFile($output, $input->getArgument('file'));
@@ -44,7 +44,7 @@ class DebugCommand extends Command
         }
     }
 
-    private function checkFile(OutputInterface $output, string $file)
+    private function checkFile(OutputInterface $output, string $file): void
     {
         $entry_points = $this->config->getEntryPoints();
         $assets       = $this->config->getAssetFiles();
@@ -102,7 +102,7 @@ class DebugCommand extends Command
         $this->printDependencyTree($output, $file_obj);
     }
 
-    private function printDependencyTree(OutputInterface $output, File $file, int $depth = 0)
+    private function printDependencyTree(OutputInterface $output, File $file, int $depth = 0): void
     {
         $deps = $this->finder->all($file);
 
@@ -114,16 +114,16 @@ class DebugCommand extends Command
         }
     }
 
-    private function filesize(string $file)
+    private function filesize(string $file): string
     {
         $bytes  = filesize($this->config->getProjectRoot() . DIRECTORY_SEPARATOR . $file);
         $sizes  = 'BKMGTP';
-        $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
+        $factor = (int) floor((\strlen((string) $bytes) - 1) / 3);
 
         return sprintf('%.2f', $bytes / (1024 ** $factor)) . @$sizes[$factor];
     }
 
-    private function printAll(OutputInterface $output)
+    private function printAll(OutputInterface $output): void
     {
         $entry_points = $this->config->getEntryPoints();
         $assets       = $this->config->getAssetFiles();

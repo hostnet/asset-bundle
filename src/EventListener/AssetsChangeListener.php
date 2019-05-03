@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright 2017 Hostnet B.V.
+ * @copyright 2017-present Hostnet B.V.
  */
 declare(strict_types=1);
 
@@ -18,7 +18,7 @@ final class AssetsChangeListener
 
     public function __construct(BundlerInterface $bundler, BuildConfig $build_config)
     {
-        $this->bundler = $bundler;
+        $this->bundler      = $bundler;
         $this->build_config = $build_config;
     }
 

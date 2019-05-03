@@ -1,8 +1,10 @@
 {
-    "name":        "hostnet/asset-bundle",
-    "type":        "symfony-bundle",
-    "description": "Allows the configuration of the hostnet/asset-lib package in your Symfony application.",
-    "license":     "MIT",
+    "name":              "hostnet/asset-bundle",
+    "type":              "symfony-bundle",
+    "description":       "Allows the configuration of the hostnet/asset-lib package in your Symfony application.",
+    "license":           "MIT",
+    "minimum-stability": "dev",
+    "prefer-stable":     true,
     "authors": [
         {
             "name":  "Yannick de Lange",
@@ -25,8 +27,8 @@
         "twig/twig":          "^1.38.2||^2.7.2"
     },
     "conflict": {
-        "twig/twig": "<1.26",
-        "phpdocumentor/type-resolver" : "<0.3"
+        "phpdocumentor/type-resolver": "<0.3",
+        "twig/twig":                   "<1.26"
     },
     "autoload": {
         "psr-4": {
@@ -38,8 +40,6 @@
             "Hostnet\\Bundle\\AssetBundle\\": "test/"
         }
     },
-    "minimum-stability" : "dev",
-    "prefer-stable"     : true,
     "archive": {
         "exclude": [
             "/test"
