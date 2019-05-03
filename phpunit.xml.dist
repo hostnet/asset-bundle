@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" forceCoversAnnotation="true">
+<phpunit forceCoversAnnotation="true"
+         colors="true"
+         bootstrap="vendor/autoload.php"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd">
     <testsuites>
-        <testsuite>
+        <testsuite name="Assert Bundle - Unit tests">
             <directory>./test</directory>
         </testsuite>
     </testsuites>
