@@ -20,7 +20,7 @@ class FunctionalTest extends KernelTestCase
         static::bootKernel();
     }
 
-    protected static function getKernelClass()
+    protected static function getKernelClass(): string
     {
         return TestKernel::class;
     }

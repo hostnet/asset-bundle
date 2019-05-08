@@ -13,9 +13,11 @@ use Hostnet\Component\Resolver\Builder\Bundler;
 use Hostnet\Component\Resolver\Import\ImportFinder;
 use Hostnet\Component\Resolver\Import\Nodejs\Executable;
 use Hostnet\Component\Resolver\Plugin\LessPlugin;
+use Hostnet\Component\Resolver\Plugin\PluginInterface;
 use Hostnet\Component\Resolver\Plugin\TsPlugin;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
@@ -204,8 +206,12 @@ class HostnetAssetExtensionTest extends TestCase
         $this->validateBaseServiceDefinitions($container);
     }
 
-    private function assertConfig(ContainerBuilder $container, bool $is_dev, string $output_folder, array $plugins = []): void
-    {
+    private function assertConfig(
+        ContainerBuilder $container,
+        bool $is_dev,
+        string $output_folder,
+        array $plugins = []
+    ): void {
         $definition = $container->getDefinition('hostnet_asset.config');
 
         self::assertSame($is_dev, $definition->getArgument(0));
@@ -311,10 +317,6 @@ class HostnetAssetExtensionTest extends TestCase
         self::assertInstanceOf(Bundler::class, $container->get('hostnet_asset.bundler'));
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Class stdClass should implement Hostnet\Component\Resolver\Plugin\PluginInterface.
-     */
     public function testBuildNonPlugin(): void
     {
         $container = new ContainerBuilder();
@@ -327,14 +329,13 @@ class HostnetAssetExtensionTest extends TestCase
         $container->setDefinition('event_dispatcher', new Definition(EventDispatcher::class));
         $container->setDefinition('logger', new Definition(NullLogger::class));
 
-        $this->hostnet_asset_extension->load([[
-            'bin' => ['node' => '/usr/bin/node'],
-            'plugins' => [
-                \stdClass::class => true,
-            ],
-        ]], $container);
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('stdClass should implement ' . PluginInterface::class);
 
-        $container->compile();
+        $this->hostnet_asset_extension->load([[
+            'bin'     => ['node' => '/usr/bin/node'],
+            'plugins' => [\stdClass::class => true],
+        ]], $container);
     }
 
     public function testBuildNonBuiltin(): void

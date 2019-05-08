@@ -32,7 +32,7 @@ final class HostnetAssetExtension extends Extension
     /**
      * {@inheritdoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
 
@@ -47,11 +47,11 @@ final class HostnetAssetExtension extends Extension
 
         $plugins = [];
         foreach ($config['plugins'] as $name => $is_enabled) {
-            if (! $is_enabled) {
+            if (false === $is_enabled) {
                 continue;
             }
 
-            if (! is_subclass_of($name, PluginInterface::class)) {
+            if (false === is_subclass_of($name, PluginInterface::class)) {
                 throw new InvalidConfigurationException(sprintf(
                     'Class %s should implement %s.',
                     $name,
@@ -87,8 +87,7 @@ final class HostnetAssetExtension extends Extension
             new Reference('logger'),
             null,
             new Reference('hostnet_asset.split_strategy'),
-        ]))
-            ->setPublic(false);
+        ]))->setPublic(false);
 
         $container->setDefinition('hostnet_asset.config', $bundler_config);
 
@@ -173,7 +172,7 @@ final class HostnetAssetExtension extends Extension
 
     private function configureEventListeners(ContainerBuilder $container): void
     {
-        if (! $container->getParameter('kernel.debug')) {
+        if (false === $container->getParameter('kernel.debug')) {
             return;
         }
         $change_listener = (new Definition(AssetsChangeListener::class, [
