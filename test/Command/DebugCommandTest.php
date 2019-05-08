@@ -109,11 +109,11 @@ class DebugCommandTest extends TestCase
         ), $output->fetch());
     }
 
-    private function filesize(string $file)
+    private function filesize(string $file): string
     {
         $bytes  = filesize($file);
         $sizes  = 'BKMGTP';
-        $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
+        $factor = (int) floor((\strlen((string) $bytes) - 1) / 3);
 
         return sprintf('%.2f', $bytes / (1024 ** $factor)) . @$sizes[$factor];
     }

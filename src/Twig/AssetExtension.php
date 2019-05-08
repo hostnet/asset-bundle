@@ -22,11 +22,9 @@ final class AssetExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
-        return [
-            new TwigFunction('asset_url', [$this, 'assetUrl']),
-        ];
+        return [new TwigFunction('asset_url', [$this, 'assetUrl'])];
     }
 
     public function assetUrl(string $name): string
