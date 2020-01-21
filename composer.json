@@ -5,7 +5,7 @@
     "license":     "MIT",
     "require": {
         "php":                          ">=7.2",
-        "hostnet/asset-lib":            "^0.3.0",
+        "hostnet/asset-lib":            "^1.0.0",
         "symfony/config":               "^4.3",
         "symfony/console":              "^4.3",
         "symfony/dependency-injection": "^4.3",
