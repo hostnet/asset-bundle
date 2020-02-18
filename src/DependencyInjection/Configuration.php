@@ -6,10 +6,8 @@ declare(strict_types=1);
 
 namespace Hostnet\Bundle\AssetBundle\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Process\ExecutableFinder;
 
 final class Configuration implements ConfigurationInterface
@@ -19,9 +17,8 @@ final class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $finder       = new ExecutableFinder();
-        $tree_builder = $this->createTreeBuilder();
-        $root_node    = $this->retrieveRootNode($tree_builder);
-
+        $tree_builder = new TreeBuilder(self::CONFIG_ROOT);
+        $root_node    = $tree_builder->getRootNode();
         $root_node
             ->children()
                 ->arrayNode('files')
@@ -89,27 +86,5 @@ final class Configuration implements ConfigurationInterface
             ->end();
 
         return $tree_builder;
-    }
-
-    private function createTreeBuilder(): TreeBuilder
-    {
-        if (Kernel::VERSION_ID >= 40200) {
-            return new TreeBuilder(self::CONFIG_ROOT);
-        }
-        if (Kernel::VERSION_ID >= 30300 && Kernel::VERSION_ID < 40200) {
-            return new TreeBuilder();
-        }
-        throw new \RuntimeException('This bundle can only be used by Symfony 3.3 and up.');
-    }
-
-    private function retrieveRootNode(TreeBuilder $tree_builder): NodeDefinition
-    {
-        if (Kernel::VERSION_ID >= 40200) {
-            return $tree_builder->getRootNode();
-        }
-        if (Kernel::VERSION_ID >= 30300 && Kernel::VERSION_ID < 40200) {
-            return $tree_builder->root(self::CONFIG_ROOT);
-        }
-        throw new \RuntimeException('This bundle can only be used by Symfony 3.3 and up.');
     }
 }

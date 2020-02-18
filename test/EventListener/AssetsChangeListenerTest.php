@@ -10,7 +10,7 @@ use Hostnet\Component\Resolver\Builder\BuildConfig;
 use Hostnet\Component\Resolver\Builder\BundlerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
@@ -44,7 +44,7 @@ class AssetsChangeListenerTest extends TestCase
         $kernel  = $this->prophesize(HttpKernelInterface::class);
         $request = new Request();
 
-        $e = new GetResponseEvent($kernel->reveal(), $request, HttpKernelInterface::MASTER_REQUEST);
+        $e = new RequestEvent($kernel->reveal(), $request, HttpKernelInterface::MASTER_REQUEST);
 
         $this->assets_change_listener->onKernelRequest($e);
     }
@@ -56,7 +56,7 @@ class AssetsChangeListenerTest extends TestCase
         $kernel  = $this->prophesize(HttpKernelInterface::class);
         $request = new Request();
 
-        $e = new GetResponseEvent($kernel->reveal(), $request, HttpKernelInterface::SUB_REQUEST);
+        $e = new RequestEvent($kernel->reveal(), $request, HttpKernelInterface::SUB_REQUEST);
 
         $this->assets_change_listener->onKernelRequest($e);
     }

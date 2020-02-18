@@ -8,7 +8,7 @@ namespace Hostnet\Bundle\AssetBundle\EventListener;
 
 use Hostnet\Component\Resolver\Builder\BuildConfig;
 use Hostnet\Component\Resolver\Builder\BundlerInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 final class AssetsChangeListener
@@ -22,7 +22,7 @@ final class AssetsChangeListener
         $this->build_config = $build_config;
     }
 
-    public function onKernelRequest(GetResponseEvent $e): void
+    public function onKernelRequest(RequestEvent $e): void
     {
         // Only trigger on the master request.
         if ($e->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {

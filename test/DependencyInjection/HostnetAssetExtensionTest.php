@@ -76,9 +76,7 @@ class HostnetAssetExtensionTest extends TestCase
         $container->setParameter('kernel.project_dir', __DIR__);
         $container->setParameter('kernel.cache_dir', __DIR__);
 
-        $this->hostnet_asset_extension->load([[
-            'bin' => ['node' => '/usr/bin/node'],
-        ]], $container);
+        $this->hostnet_asset_extension->load([['bin' => ['node' => '/usr/bin/node']]], $container);
 
         self::assertEquals([
             'service_container',
@@ -110,9 +108,7 @@ class HostnetAssetExtensionTest extends TestCase
         $container->setParameter('kernel.project_dir', __DIR__);
         $container->setParameter('kernel.cache_dir', __DIR__);
 
-        $this->hostnet_asset_extension->load([[
-            'bin' => ['node' => '/usr/bin/node'],
-        ]], $container);
+        $this->hostnet_asset_extension->load([['bin' => ['node' => '/usr/bin/node']]], $container);
 
         self::assertEquals([
             'service_container',
@@ -142,10 +138,15 @@ class HostnetAssetExtensionTest extends TestCase
         $container->setParameter('kernel.project_dir', __DIR__);
         $container->setParameter('kernel.cache_dir', __DIR__);
 
-        $this->hostnet_asset_extension->load([[
-            'bin' => ['node' => '/usr/bin/node'],
-            'plugins' => [TsPlugin::class => true],
-        ]], $container);
+        $this->hostnet_asset_extension->load(
+            [
+                [
+                    'bin'     => ['node' => '/usr/bin/node'],
+                    'plugins' => [TsPlugin::class => true],
+                ],
+            ],
+            $container
+        );
 
         self::assertEquals([
             'service_container',
@@ -178,10 +179,15 @@ class HostnetAssetExtensionTest extends TestCase
         $container->setParameter('kernel.project_dir', __DIR__);
         $container->setParameter('kernel.cache_dir', __DIR__);
 
-        $this->hostnet_asset_extension->load([[
-            'bin' => ['node' => '/usr/bin/node'],
-            'plugins' => [LessPlugin::class => true],
-        ]], $container);
+        $this->hostnet_asset_extension->load(
+            [
+                [
+                    'bin'     => ['node' => '/usr/bin/node'],
+                    'plugins' => [LessPlugin::class => true],
+                ],
+            ],
+            $container
+        );
 
         self::assertEquals([
             'service_container',
@@ -285,7 +291,7 @@ class HostnetAssetExtensionTest extends TestCase
             ]))
                 ->setPublic(false)
                 ->addTag('kernel.event_listener', [
-                    'event' => KernelEvents::REQUEST,
+                    'event'  => KernelEvents::REQUEST,
                     'method' => 'onKernelRequest',
                 ]),
             $container->getDefinition('hostnet_asset.listener.assets_change')
@@ -304,13 +310,18 @@ class HostnetAssetExtensionTest extends TestCase
         $container->setDefinition('event_dispatcher', new Definition(EventDispatcher::class));
         $container->setDefinition('logger', new Definition(NullLogger::class));
 
-        $this->hostnet_asset_extension->load([[
-            'bin' => ['node' => '/usr/bin/node'],
-            'plugins' => [
-                TsPlugin::class => true,
-                LessPlugin::class => true,
+        $this->hostnet_asset_extension->load(
+            [
+                [
+                    'bin'     => ['node' => '/usr/bin/node'],
+                    'plugins' => [
+                        TsPlugin::class   => true,
+                        LessPlugin::class => true,
+                    ],
+                ],
             ],
-        ]], $container);
+            $container
+        );
 
         $container->compile();
 
@@ -332,10 +343,15 @@ class HostnetAssetExtensionTest extends TestCase
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('stdClass should implement ' . PluginInterface::class);
 
-        $this->hostnet_asset_extension->load([[
-            'bin'     => ['node' => '/usr/bin/node'],
-            'plugins' => [\stdClass::class => true],
-        ]], $container);
+        $this->hostnet_asset_extension->load(
+            [
+                [
+                    'bin'     => ['node' => '/usr/bin/node'],
+                    'plugins' => [\stdClass::class => true],
+                ],
+            ],
+            $container
+        );
     }
 
     public function testBuildNonBuiltin(): void
@@ -350,12 +366,15 @@ class HostnetAssetExtensionTest extends TestCase
         $container->setDefinition('event_dispatcher', new Definition(EventDispatcher::class));
         $container->setDefinition('logger', new Definition(NullLogger::class));
 
-        $this->hostnet_asset_extension->load([[
-            'bin' => ['node' => '/usr/bin/node'],
-            'plugins' => [
-                MockPlugin::class => true,
+        $this->hostnet_asset_extension->load(
+            [
+                [
+                    'bin'     => ['node' => '/usr/bin/node'],
+                    'plugins' => [MockPlugin::class => true],
+                ],
             ],
-        ]], $container);
+            $container
+        );
 
         // make the config public
         $container->getDefinition('hostnet_asset.config')->setPublic(true);
