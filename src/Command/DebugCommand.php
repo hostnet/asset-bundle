@@ -28,6 +28,9 @@ class DebugCommand extends Command
         $this->finder = $finder;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configure(): void
     {
         $this
@@ -35,13 +38,18 @@ class DebugCommand extends Command
             ->addArgument('file');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($input->getArgument('file')) {
             $this->checkFile($output, $input->getArgument('file'));
         } else {
             $this->printAll($output);
         }
+
+        return 0;
     }
 
     private function checkFile(OutputInterface $output, string $file): void

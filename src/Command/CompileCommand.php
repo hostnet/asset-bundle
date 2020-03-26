@@ -37,7 +37,7 @@ final class CompileCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         switch ($output->getVerbosity()) {
             case OutputInterface::VERBOSITY_DEBUG:
@@ -73,5 +73,7 @@ final class CompileCommand extends Command
         // Is used in a functional way to prevent defunct processes
         // https://github.com/symfony/symfony/issues/12097#issuecomment-343145050
         $output->writeln(self::EXIT_MESSAGE);
+
+        return 0;
     }
 }
