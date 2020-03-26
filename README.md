@@ -5,8 +5,6 @@
 # Asset Bundle
 [![Travis Status](https://travis-ci.org/hostnet/asset-bundle.svg?branch=master)](https://travis-ci.org/hostnet/asset-bundle)
 
-> This project is work in progress, nothing is final! Use at own risk.
-
 This bundle exposes the [asset-lib](https://github.com/hostnet/asset-lib) as a Symfony bundle.
 
 Installation
