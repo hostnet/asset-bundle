@@ -80,12 +80,17 @@ class CompileCommandTest extends TestCase
     {
         $this->config->getProjectRoot()->willReturn(__DIR__);
         $this->config->replaceReporter(Argument::type(ConsoleReporter::class))->willReturn(new NullReporter());
-
-        $formatter = $this->prophesize(OutputFormatterInterface::class);
-
         $output = $this->prophesize(OutputInterface::class);
+
+        if (class_exists('\Symfony\Component\Console\Formatter\NullOutputFormatter')) {
+            $formatter = new \Symfony\Component\Console\Formatter\NullOutputFormatter();
+            $output->getFormatter()->willReturn($formatter);
+        } else {
+            $formatter = $this->prophesize(OutputFormatterInterface::class);
+            $output->getFormatter()->willReturn($formatter->reveal());
+
+        }
         $output->getVerbosity()->willReturn(OutputInterface::VERBOSITY_VERY_VERBOSE);
-        $output->getFormatter()->willReturn($formatter);
         $output->writeln(CompileCommand::EXIT_MESSAGE)->shouldBeCalled();
         $output->writeln('')->shouldBeCalled();
         $output->writeln(' Asset   Size    Status ')->shouldBeCalled();
