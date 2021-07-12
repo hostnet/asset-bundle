@@ -9,6 +9,7 @@ namespace Hostnet\Bundle\AssetBundle\EventListener;
 use Hostnet\Component\Resolver\Builder\BuildConfig;
 use Hostnet\Component\Resolver\Builder\BundlerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -18,6 +19,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 class AssetsChangeListenerTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $bundler;
     private $config;
 
