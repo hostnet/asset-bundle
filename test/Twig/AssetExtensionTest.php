@@ -8,6 +8,7 @@ namespace Hostnet\Bundle\AssetBundle\Twig;
 
 use Hostnet\Component\Resolver\Config\ConfigInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Twig\TwigFunction;
 
 /**
@@ -15,6 +16,8 @@ use Twig\TwigFunction;
  */
 class AssetExtensionTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $config;
 
     /**
@@ -42,7 +45,7 @@ class AssetExtensionTest extends TestCase
         $this->config->getOutputFolder()->willReturn(basename(__DIR__));
         $this->config->getProjectRoot()->willReturn(dirname(__DIR__));
 
-        self::assertRegExp(
+        self::assertMatchesRegularExpression(
             '~^/phpunit/AssetExtensionTest\.php\?[0-9]+$~',
             $this->asset_extension->assetUrl(basename(__FILE__))
         );

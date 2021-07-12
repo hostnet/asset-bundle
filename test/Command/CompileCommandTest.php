@@ -14,6 +14,7 @@ use Hostnet\Component\Resolver\Report\ConsoleReporter;
 use Hostnet\Component\Resolver\Report\NullReporter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,6 +24,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class CompileCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $bundler;
     private $config;
     private $build_config;

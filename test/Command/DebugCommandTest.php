@@ -13,6 +13,7 @@ use Hostnet\Component\Resolver\Import\ImportFinderInterface;
 use Hostnet\Component\Resolver\Import\RootFile;
 use Hostnet\Component\Resolver\Split\OneOnOneSplittingStrategy;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -21,6 +22,8 @@ use Symfony\Component\Console\Output\BufferedOutput;
  */
 class DebugCommandTest extends TestCase
 {
+    use ProphecyTrait;
+
     private $config;
     private $finder;
 
