@@ -3,7 +3,7 @@
 </a></p>
 
 # Asset Bundle
-[![Travis Status](https://travis-ci.org/hostnet/asset-bundle.svg?branch=master)](https://travis-ci.org/hostnet/asset-bundle)
+[![Build Status](https://github.com/hostnet/asset-bundle/actions/workflows/main.yml/badge.svg)](https://github.com/hostnet/asset-bundle/actions/workflows/main.yml)
 
 This bundle exposes the [asset-lib](https://github.com/hostnet/asset-lib) as a Symfony bundle.
 
