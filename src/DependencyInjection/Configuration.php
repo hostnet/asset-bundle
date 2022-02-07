@@ -67,7 +67,7 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->scalarNode('node_modules')
                             ->info('Path to the application\'s node_modules.')
-                            ->defaultValue('%kernel.root_dir%/../node_modules')
+                            ->defaultValue('%kernel.project_dir%/node_modules')
                             ->end()
                         ->end()
                     ->end()
