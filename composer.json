@@ -30,6 +30,12 @@
             "Hostnet\\Bundle\\AssetBundle\\": "test/"
         }
     },
+    "config": {
+        "allow-plugins": {
+            "hostnet/*":                                      true,
+            "dealerdirect/phpcodesniffer-composer-installer": false
+        }
+    },
     "archive": {
         "exclude": [
             "/test"

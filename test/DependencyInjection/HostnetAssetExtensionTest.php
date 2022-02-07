@@ -237,7 +237,7 @@ class HostnetAssetExtensionTest extends TestCase
     {
         self::assertEquals((new Definition(Executable::class, [
             '/usr/bin/node',
-            '%kernel.root_dir%/../node_modules',
+            '%kernel.project_dir%/node_modules',
         ]))->setPublic(false), $container->getDefinition('hostnet_asset.node.executable'));
 
         self::assertEquals(
@@ -305,7 +305,6 @@ class HostnetAssetExtensionTest extends TestCase
         $container->setParameter('kernel.debug', true);
         $container->setParameter('kernel.project_dir', __DIR__);
         $container->setParameter('kernel.cache_dir', __DIR__);
-        $container->setParameter('kernel.root_dir', __DIR__);
 
         $container->setDefinition('event_dispatcher', new Definition(EventDispatcher::class));
         $container->setDefinition('logger', new Definition(NullLogger::class));
@@ -335,7 +334,6 @@ class HostnetAssetExtensionTest extends TestCase
         $container->setParameter('kernel.debug', true);
         $container->setParameter('kernel.project_dir', __DIR__);
         $container->setParameter('kernel.cache_dir', __DIR__);
-        $container->setParameter('kernel.root_dir', __DIR__);
 
         $container->setDefinition('event_dispatcher', new Definition(EventDispatcher::class));
         $container->setDefinition('logger', new Definition(NullLogger::class));
@@ -361,7 +359,6 @@ class HostnetAssetExtensionTest extends TestCase
         $container->setParameter('kernel.debug', true);
         $container->setParameter('kernel.project_dir', __DIR__);
         $container->setParameter('kernel.cache_dir', __DIR__);
-        $container->setParameter('kernel.root_dir', __DIR__);
 
         $container->setDefinition('event_dispatcher', new Definition(EventDispatcher::class));
         $container->setDefinition('logger', new Definition(NullLogger::class));
