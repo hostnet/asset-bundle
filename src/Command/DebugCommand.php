@@ -28,9 +28,6 @@ class DebugCommand extends Command
         $this->finder = $finder;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this

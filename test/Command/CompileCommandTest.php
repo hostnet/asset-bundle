@@ -91,12 +91,14 @@ class CompileCommandTest extends TestCase
         } else {
             $formatter = $this->prophesize(OutputFormatterInterface::class);
             $output->getFormatter()->willReturn($formatter->reveal());
-
         }
         $output->getVerbosity()->willReturn(OutputInterface::VERBOSITY_VERY_VERBOSE);
         $output->writeln(CompileCommand::EXIT_MESSAGE)->shouldBeCalled();
         $output->writeln('')->shouldBeCalled();
-        $output->writeln(' Asset   Size    Status ')->shouldBeCalled();
+
+        // Trailing and leading space change between Symfony versions
+        $output->writeln(Argument::containingString('Asset   Size    Status'))->shouldBeCalled();
+
         $output->writeln(Argument::that(function (string $v) {
             return preg_match('/Total time: \d+ms/i', $v);
         }))->shouldBeCalled();
