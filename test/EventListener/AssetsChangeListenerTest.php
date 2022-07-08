@@ -47,7 +47,7 @@ class AssetsChangeListenerTest extends TestCase
         $kernel  = $this->prophesize(HttpKernelInterface::class);
         $request = new Request();
 
-        $e = new RequestEvent($kernel->reveal(), $request, HttpKernelInterface::MASTER_REQUEST);
+        $e = new RequestEvent($kernel->reveal(), $request, HttpKernelInterface::MAIN_REQUEST);
 
         $this->assets_change_listener->onKernelRequest($e);
     }

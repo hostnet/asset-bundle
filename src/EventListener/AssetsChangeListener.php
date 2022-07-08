@@ -25,7 +25,7 @@ final class AssetsChangeListener
     public function onKernelRequest(RequestEvent $e): void
     {
         // Only trigger on the master request.
-        if ($e->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
+        if ($e->getRequestType() !== HttpKernelInterface::MAIN_REQUEST) {
             return;
         }
 
