@@ -38,7 +38,7 @@ class DebugCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getArgument('file')) {
             $this->checkFile($output, $input->getArgument('file'));

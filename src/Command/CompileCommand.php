@@ -37,7 +37,7 @@ final class CompileCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         switch ($output->getVerbosity()) {
             case OutputInterface::VERBOSITY_DEBUG:
