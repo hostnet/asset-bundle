@@ -1,3 +1,7 @@
+**Note:** Due to the fast changing ecosystem and better javascript support in popular frameworks, this lib has been deprecated with no direct alternative.
+
+----
+
 <p align="center"><a href="http://www.hostnet.nl" target="_blank">
     <img width="400" src="https://www.hostnet.nl/images/hostnet.svg">
 </a></p>
